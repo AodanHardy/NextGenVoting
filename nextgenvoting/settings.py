@@ -75,10 +75,21 @@ WSGI_APPLICATION = 'nextgenvoting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+'''
+        'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'local_nextgenvoting',
+        'USER': 'aodan',
+        'PASSWORD': 'Amymagee2017',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -116,6 +127,12 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+
+
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "core/static"]
