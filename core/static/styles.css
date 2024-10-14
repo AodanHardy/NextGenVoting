@@ -1,0 +1,12 @@
+.banner {
+  min-width: 100%;
+  background-image: url("images/banner.jpeg");
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  color: #79da11;
+  padding-top: 120px;
+  padding-bottom: 120px;
+  font-size: 30px;
+  position: relative;
+}
