@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static '/dashboard.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="{% url 'dashboard' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+            </a>
+        </div>
+        <div class="navbar-center">
+            <a href="">Add Election</a>
+            <a href="">View Elections</a>
+        </div>
+        <div class="navbar-right">
+            <a href="{% url 'logout' %}">Sign Out</a>
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 NextGenVoting</p>
+    </footer>
+</body>
+</html>

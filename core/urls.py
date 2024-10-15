@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
+
+import elections
 from . import views
 
 urlpatterns = [
@@ -11,7 +13,4 @@ urlpatterns = [
     # Signup view
     path('signup/', views.signup, name='signup'),
 
-
-    # Dashboard
-    path('dashboard', views.dashboard, name='dashboard')
 ]
