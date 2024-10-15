@@ -19,7 +19,15 @@
             <a href="">View Elections</a>
         </div>
         <div class="navbar-right">
-            <a href="{% url 'logout' %}">Sign Out</a>
+
+            <form action="{% url 'logout' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="">Logout</button>
+                    </form>
+
+
+
+
         </div>
     </nav>
 

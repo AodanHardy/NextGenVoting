@@ -20,8 +20,3 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
-
-
-@login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
