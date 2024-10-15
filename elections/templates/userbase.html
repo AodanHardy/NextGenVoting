@@ -15,8 +15,8 @@
             </a>
         </div>
         <div class="navbar-center">
-            <a href="">Add Election</a>
-            <a href="">View Elections</a>
+            <a href="{% url 'dashboard' %}">Add Election</a>
+            <a href="{% url 'dashboard' %}">View Elections</a>
         </div>
         <div class="navbar-right">
 
@@ -24,10 +24,6 @@
                     {% csrf_token %}
                     <button type="submit" class="">Logout</button>
                     </form>
-
-
-
-
         </div>
     </nav>
 
