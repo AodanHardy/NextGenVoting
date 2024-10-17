@@ -8,7 +8,7 @@ class BallotData:
         self.candidates.append(candidate)
 
 
-class Voter:
+class VoterData:
     def __init__(self, name, email):
         self.name = name
         self.email = email

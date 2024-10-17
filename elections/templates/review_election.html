@@ -1,0 +1,18 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+
+<h2>Review Your Election</h2>
+<p>Title: {{ election_data.title }}</p>
+<p>Description: {{ election_data.description }}</p>
+<p>Start Time: {{ election_data.start_time }}</p>
+<p>End Time: {{ election_data.end_time }}</p>
+<!-- Display ballots and candidates -->
+<form method="POST">
+  {% csrf_token %}
+  <button type="submit">Confirm and Save</button>
+</form>
+
+
+
+{% endblock %}

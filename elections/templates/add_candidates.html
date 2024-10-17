@@ -2,10 +2,21 @@
 
 {% block content %}
 
-<form method="post" enctype="multipart/form-data">
+<form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Next</button>
+    <div>
+        {{ form.candidates.label_tag }}
+        {{ form.candidates }}
+    </div>
+    <button type="submit">Submit Candidates</button>
 </form>
+
+<h3>Current Candidates:</h3>
+<ul>
+    {% for candidate in candidates %}
+        <li>{{ candidate }}</li>
+    {% endfor %}
+</ul>
+
 
 {% endblock %}

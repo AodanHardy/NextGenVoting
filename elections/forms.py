@@ -23,5 +23,5 @@ class CandidatesForm(forms.Form):
     candidates = forms.CharField(widget=forms.Textarea, label="Enter candidates separated by commas")
 
 
-class VotersListForm(forms.Form):
+class VoterUploadForm(forms.Form):
     voter_file = forms.FileField(label="Upload Voter List (CSV format)")
