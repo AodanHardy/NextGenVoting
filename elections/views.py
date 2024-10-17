@@ -262,14 +262,13 @@ def manage_election(request, election_id):
     election = get_object_or_404(Election, id=election_id, user=request.user)
 
     if request.method == 'POST':
-        # Check if the user clicked "Start" or "Stop"
         action = request.POST.get('action')
 
         if action == 'start':
             election.start_time = timezone.now()
-            election.status = 'in_progress'
+            election.status = 'active'
             election.save()
-        elif action == 'stop':
+        elif action == 'end':
             election.end_time = timezone.now()
             election.status = 'completed'
             election.save()
