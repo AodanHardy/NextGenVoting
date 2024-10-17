@@ -133,6 +133,7 @@ def add_candidates(request):
                 return redirect('elections:add_ballots')
             else:
                 # All ballots are added, move to voter upload
+                del request.session['current_ballot']
                 return redirect('elections:add_voters')
 
     else:

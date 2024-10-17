@@ -39,12 +39,8 @@ body {
     font-weight: bold;
 }
 
-.navbar-right a:hover {
-    color: #e74c3c;
-}
-
 .content {
-    padding: 40px;
+    padding: 60px 60px 100px;
 }
 
 footer {
@@ -58,7 +54,6 @@ footer {
     border-top: 2px solid #1a242f;
 }
 
-/* Corporate feel for buttons and inputs */
 a, button, input {
     font-family: 'Helvetica', sans-serif;
     font-size: 16px;
@@ -85,3 +80,6 @@ input {
     margin: 10px 0;
     box-sizing: border-box;
 }
+
+
+
