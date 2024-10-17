@@ -20,7 +20,8 @@ class BallotForm(forms.Form):
 
 
 class CandidatesForm(forms.Form):
-    candidates = forms.CharField(widget=forms.Textarea, label="Enter candidates separated by commas")
+    number_of_winners = forms.IntegerField(min_value=1, label="Number of Winners", required=False)
+    candidates = forms.CharField(max_length=1000, label="Enter candidates separated by commas")
 
 
 class VoterUploadForm(forms.Form):

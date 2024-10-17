@@ -8,15 +8,19 @@
         {{ form.candidates.label_tag }}
         {{ form.candidates }}
     </div>
+
+
+    {% if voting_type == 'ranked_choice' %}
+    <div>
+        {{ form.number_of_winners.label_tag }}
+        {{ form.number_of_winners }}
+    </div>
+    {% endif %}
+
     <button type="submit">Submit Candidates</button>
 </form>
 
-<h3>Current Candidates:</h3>
-<ul>
-    {% for candidate in candidates %}
-        <li>{{ candidate }}</li>
-    {% endfor %}
-</ul>
+
 
 
 {% endblock %}

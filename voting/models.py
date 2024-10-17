@@ -18,6 +18,7 @@ class Ballot(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     voting_type = models.CharField(max_length=3, choices=VOTING_TYPE_CHOICES)
+    number_of_winners = models.IntegerField(default=1)
     results_published = models.BooleanField(default=False)
     votes_cast = models.IntegerField(default=0)
 

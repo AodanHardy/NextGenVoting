@@ -97,7 +97,7 @@ def add_ballots(request):
 
 @login_required
 def add_candidates(request):
-    # Retrieve the current ballot from the session
+    # Retrieve the current ballot, and voting type from the session
     current_ballot = request.session.get('currentBallot')
     election_data = request.session.get('election')
 
@@ -110,6 +110,10 @@ def add_candidates(request):
             # Get the candidates from the form, split by commas, and clean them up
             candidates_str = form.cleaned_data['candidates']
             candidate_list = [candidate.strip() for candidate in candidates_str.split(',') if candidate.strip()]
+
+            # Get number of winners
+            num_of_winners = form.cleaned_data['number_of_winners']
+            current_ballot['number_of_winners'] = num_of_winners
 
             # Add candidates to the current ballot
             current_ballot['candidates'].extend(candidate_list)
@@ -133,7 +137,8 @@ def add_candidates(request):
                 return redirect('elections:add_ballots')
             else:
                 # All ballots are added, move to voter upload
-                del request.session['current_ballot']
+                # Reset current ballot
+                request.session['current_ballot'] = 1
                 return redirect('elections:add_voters')
 
     else:
@@ -221,7 +226,8 @@ def review_election(request):
             ballot = Ballot.objects.create(
                 election=election,
                 title=ballot_data['title'],
-                voting_type=voting_type,  # Use mapped value
+                voting_type=voting_type,
+                number_of_winners=ballot_data['number_of_winners']
             )
 
             # Save Candidates for each ballot

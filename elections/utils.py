@@ -3,9 +3,13 @@ class BallotData:
         self.title = title
         self.voting_type = voting_type
         self.candidates = []
+        self.number_of_winners = 1
 
     def add_candidate(self, candidate):
         self.candidates.append(candidate)
+
+    def setNumOfWinners(self, num):
+        self.number_of_winners = num
 
 
 class VoterData:
