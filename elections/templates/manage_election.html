@@ -1,0 +1,30 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+  <h2>Manage Election</h2>
+
+  <div class="election-details">
+    <p><strong>Title:</strong> {{ election.title }}</p>
+    <p><strong>Description:</strong> {{ election.description }}</p>
+    <p><strong>Status:</strong> {{ election.get_status_display }}</p>
+
+    {% if election.start_time %}
+    <p><strong>Started at:</strong> {{ election.start_time }}</p>
+    {% endif %}
+
+    {% if election.end_time %}
+    <p><strong>Ended at:</strong> {{ election.end_time }}</p>
+    {% endif %}
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    {% if election.status == 'pending' %}
+      <button type="submit" name="action" value="start" class="btn btn-success">Start Election</button>
+    {% elif election.status == 'in_progress' %}
+      <button type="submit" name="action" value="stop" class="btn btn-danger">Stop Election</button>
+    {% endif %}
+  </form>
+
+  <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+{% endblock %}

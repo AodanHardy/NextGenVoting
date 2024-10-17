@@ -13,7 +13,7 @@
                     <h5 class="card-title">{{ election.title }}</h5>
                     <p class="card-text">{{ election.description }}</p>
                     <p class="card-text">{{ election.status }}</p>
-                    <a href="" class="btn btn-primary">View Election</a>
+                    <a href="{% url 'manage_election' election.id %}" class="btn btn-primary">View Election</a>
                 </div>
             </div>
         </div>

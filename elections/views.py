@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
+
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election
 from voting.models import Ballot, Candidate, Voter
@@ -253,3 +255,25 @@ def review_election(request):
 @login_required
 def save_election(request):
     pass
+
+
+@login_required
+def manage_election(request, election_id):
+    election = get_object_or_404(Election, id=election_id, user=request.user)
+
+    if request.method == 'POST':
+        # Check if the user clicked "Start" or "Stop"
+        action = request.POST.get('action')
+
+        if action == 'start':
+            election.start_time = timezone.now()
+            election.status = 'in_progress'
+            election.save()
+        elif action == 'stop':
+            election.end_time = timezone.now()
+            election.status = 'completed'
+            election.save()
+
+        return redirect('manage_election', election_id=election.id)
+
+    return render(request, 'manage_election.html', {'election': election})
