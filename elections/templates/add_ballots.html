@@ -1,0 +1,13 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+    <h2>Ballot {{ current_ballot }} of {{ num_of_ballots }}</h2>
+    <p>Please fill out the details for Ballot {{ current_ballot_number }}.</p>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Next</button>
+    </form>
+
+{% endblock %}

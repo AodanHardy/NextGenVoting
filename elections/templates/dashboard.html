@@ -12,13 +12,18 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">{{ election.title }}</h5>
                     <p class="card-text">{{ election.description }}</p>
-                    <a href="{% url 'elections:election_detail' election.id %}" class="btn btn-primary">View Election</a>
+                    <p class="card-text">{{ election.status }}</p>
+                    <a href="" class="btn btn-primary">View Election</a>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <p>No elections available. <a href="{% url 'elections:add_election' %}">Create one here.</a></p>
+
         {% endfor %}
+
+
+
+
+
     {% else %}
     You don't currently have any Elections
     {% endif %}

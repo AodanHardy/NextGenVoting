@@ -1,0 +1,26 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        {{ form.candidates.label_tag }}
+        {{ form.candidates }}
+    </div>
+
+
+    {% if voting_type == 'ranked_choice' %}
+    <div>
+        {{ form.number_of_winners.label_tag }}
+        {{ form.number_of_winners }}
+    </div>
+    {% endif %}
+
+    <button type="submit">Submit Candidates</button>
+</form>
+
+
+
+
+{% endblock %}
