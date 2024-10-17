@@ -30,8 +30,6 @@ def election_details(request):
             print(form.cleaned_data)
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            start_time = form.cleaned_data['start_time']
-            end_time = form.cleaned_data['end_time']
             num_of_ballots = form.cleaned_data['number_of_ballots']
             use_blockchain = form.cleaned_data['use_blockchain']
 
@@ -39,17 +37,12 @@ def election_details(request):
             election = ElectionData(
                 title,
                 description,
-                start_time,
-                end_time,
                 num_of_ballots,
                 use_blockchain
-
             )
 
             electionData = election.__dict__
 
-            electionData['start_time'] = election.start_time.isoformat()
-            electionData['end_time'] = election.end_time.isoformat()
 
             request.session['election'] = electionData
 
@@ -209,8 +202,6 @@ def review_election(request):
             user=request.user,
             title=election_data['title'],
             description=election_data['description'],
-            start_time=election_data['start_time'],
-            end_time=election_data['end_time'],
             use_blockchain=election_data['useBlockchain'],
         )
 
