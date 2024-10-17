@@ -21,6 +21,8 @@ def dashboard(request):
 
 
 def election_details(request):
+    # need to Clear data from previous session
+
     if request.method == 'POST':
         # Process the form data
         form = ElectionDetailsForm(request.POST)
@@ -113,6 +115,8 @@ def add_candidates(request):
 
             # Get number of winners
             num_of_winners = form.cleaned_data['number_of_winners']
+            if num_of_winners is None:
+                num_of_winners = 1
             current_ballot['number_of_winners'] = num_of_winners
 
             # Add candidates to the current ballot
@@ -207,7 +211,7 @@ def review_election(request):
             description=election_data['description'],
             start_time=election_data['start_time'],
             end_time=election_data['end_time'],
-            use_blockchain=election_data['useBlockchain'],  # Assuming this field exists
+            use_blockchain=election_data['useBlockchain'],
         )
 
         # Mapping form voting types to model choice values
