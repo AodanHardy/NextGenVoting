@@ -10,7 +10,7 @@
     </p>
 
     {% if election.status == 'active' or election.status == 'completed' %}
-         <p class="manage-election-vote-count"><strong>Vote Count:</strong> {{ election.votes_cast }}</p>
+         <p class="manage-election-vote-count"><strong>Vote Count:</strong> {{ election.votes_cast }} / {{ voters_count }} </p>
     {% endif %}
 
     <div class="manage-election-actions">
