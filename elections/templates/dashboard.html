@@ -8,12 +8,17 @@
     {% if elections %}
         {% for election in elections %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="election-card h-100">
                 <div class="card-body text-center">
-                    <h5 class="card-title">{{ election.title }}</h5>
-                    <p class="card-text">{{ election.description }}</p>
-                    <p class="card-text">{{ election.status }}</p>
-                    <a href="" class="btn btn-primary">View Election</a>
+                    <h5 class="election-card-title">{{ election.title }}</h5>
+                    <p class="election-card-description">{{ election.description }}</p>
+
+                    <p class="manage-election-status">
+                    <span class="status {{ election.status }}">{{ election.get_status_display }}</span>
+                    </p>
+
+                    <a href="{% url 'manage_election' election.id %}" class="btn btn-primary">View Election</a>
+
                 </div>
             </div>
         </div>

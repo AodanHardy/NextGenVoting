@@ -6,8 +6,6 @@ class ElectionDetailsForm(forms.Form):
     description = forms.CharField(max_length=1000, label="Election Description")
     number_of_ballots = forms.IntegerField(min_value=1, label="Number of Ballots")
     use_blockchain = forms.BooleanField(required=False, label="Use Blockchain")
-    start_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
-    end_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
 
 
 class BallotForm(forms.Form):

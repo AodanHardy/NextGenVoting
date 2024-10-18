@@ -20,7 +20,6 @@ class Ballot(models.Model):
     voting_type = models.CharField(max_length=3, choices=VOTING_TYPE_CHOICES)
     number_of_winners = models.IntegerField(default=1)
     results_published = models.BooleanField(default=False)
-    votes_cast = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title

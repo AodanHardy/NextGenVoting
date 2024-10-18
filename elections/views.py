@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election
 from voting.models import Ballot, Candidate, Voter
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
 
 import csv
 from .forms import VoterUploadForm
@@ -20,6 +20,39 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'elections': user_elections})
 
 
+@login_required
+def manage_election(request, election_id):
+    election = get_object_or_404(Election, id=election_id, user=request.user)
+    voterCount = len(election.voters.all())
+
+    # maybe use this variable later to limit amount of voters shown on screen
+    voterList = election.voters.all()
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'start':
+            election.start_time = timezone.now()
+            election.status = 'active'
+            election.save()
+        elif action == 'end':
+            election.end_time = timezone.now()
+            election.status = 'completed'
+            election.save()
+
+        return redirect('manage_election', election_id=election.id)
+
+    return render(request, 'manage_election.html', {'election': election, 'voters_count': voterCount})
+
+
+'''' The rest of the views are for the forms for creating an election '''
+
+
+# Fist form asks for election:
+# Title
+# Description
+# number of ballots
+# if it uses blockchain
 def election_details(request):
     # need to Clear data from previous session
 
@@ -30,26 +63,19 @@ def election_details(request):
             print(form.cleaned_data)
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            start_time = form.cleaned_data['start_time']
-            end_time = form.cleaned_data['end_time']
             num_of_ballots = form.cleaned_data['number_of_ballots']
             use_blockchain = form.cleaned_data['use_blockchain']
 
-            # Create an Election object and save it in the session
+            # Create an ElectionData object and save it in the session
             election = ElectionData(
                 title,
                 description,
-                start_time,
-                end_time,
                 num_of_ballots,
                 use_blockchain
-
             )
-
+            # Need to put it in dictionary ro save it
             electionData = election.__dict__
 
-            electionData['start_time'] = election.start_time.isoformat()
-            electionData['end_time'] = election.end_time.isoformat()
 
             request.session['election'] = electionData
 
@@ -99,17 +125,18 @@ def add_ballots(request):
 
 @login_required
 def add_candidates(request):
-    # Retrieve the current ballot, and voting type from the session
+    # Retrieve the current ballot and voting type from the session
     current_ballot = request.session.get('currentBallot')
     election_data = request.session.get('election')
 
     if not current_ballot or not election_data:
-        return redirect('elections:add_ballots')  # Redirect back if there's no ballot data
+        # Redirect back if there's no ballot data
+        return redirect('elections:add_ballots')
 
     if request.method == 'POST':
         form = CandidatesForm(request.POST)
         if form.is_valid():
-            # Get the candidates from the form, split by commas, and clean them up
+            # Get the candidates from the form
             candidates_str = form.cleaned_data['candidates']
             candidate_list = [candidate.strip() for candidate in candidates_str.split(',') if candidate.strip()]
 
@@ -119,13 +146,13 @@ def add_candidates(request):
                 num_of_winners = 1
             current_ballot['number_of_winners'] = num_of_winners
 
-            # Add candidates to the current ballot
+            # Add candidates to current ballot
             current_ballot['candidates'].extend(candidate_list)
 
-            # Update the session with the current ballot
+            # Update the session with current ballot
             request.session['currentBallot'] = current_ballot
 
-            # Logic to move to the next ballot
+            # Logic to move to next ballot
             election_data['ballots'].append(current_ballot)
             request.session['election'] = election_data
 
@@ -201,7 +228,8 @@ def review_election(request):
     election_data = request.session.get('election', None)
 
     if not election_data:
-        return redirect('add_election')  # If no election data, go back to start
+        # If there's no election data, go back to start
+        return redirect('add_election')
 
     if request.method == 'POST':
         # Save the Election object
@@ -209,8 +237,6 @@ def review_election(request):
             user=request.user,
             title=election_data['title'],
             description=election_data['description'],
-            start_time=election_data['start_time'],
-            end_time=election_data['end_time'],
             use_blockchain=election_data['useBlockchain'],
         )
 
@@ -259,6 +285,3 @@ def review_election(request):
 
 
 
-@login_required
-def save_election(request):
-    pass

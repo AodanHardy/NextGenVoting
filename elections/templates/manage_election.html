@@ -1,0 +1,62 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+<div class="manage-election-container">
+    <h2 class="manage-election-title">Election: {{ election.title }}</h2>
+    <p class="manage-election-description"><strong>Description:</strong> {{ election.description }}</p>
+    <p class="manage-election-status">
+        <strong>Status:</strong>
+        <span class="status {{ election.status }}">{{ election.get_status_display }}</span>
+    </p>
+
+    {% if election.status == 'active' or election.status == 'completed' %}
+         <p class="manage-election-vote-count"><strong>Vote Count:</strong> {{ election.votes_cast }} / {{ voters_count }} </p>
+    {% endif %}
+
+    <div class="manage-election-actions">
+        {% if election.status == 'pending' %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="action" value="start" class="btn-manage-election btn-start">Start Election</button>
+            </form>
+        {% elif election.status == 'active' %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="action" value="end" class="btn-manage-election btn-end">End Election</button>
+            </form>
+
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <h3 class="manage-election-subtitle">Ballots</h3>
+    <ul class="manage-election-ballots">
+        {% for ballot in election.ballots.all %}
+            <li class="ballot-item">
+                <strong>Ballot Title:</strong> {{ ballot.title }}<br>
+                <strong>Voting Type:</strong> {{ ballot.get_voting_type_display }}<br>
+
+                <h4 class="manage-election-subsubtitle">Candidates</h4>
+                <ul class="manage-election-candidates">
+                    {% for candidate in ballot.candidates.all %}
+                        <li class="candidate-item">{{ candidate.title }}</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <hr>
+
+    <h3 class="manage-election-subtitle">Voters: {{ voters_count }}</h3>
+    <ul class="manage-election-voters">
+        {% for voter in election.voters.all %}
+            <li class="voter-item">{{ voter.name }} ({{ voter.email }})</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
+
+

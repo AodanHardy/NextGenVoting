@@ -19,11 +19,9 @@ class VoterData:
 
 
 class ElectionData:
-    def __init__(self, title, description, start_time, end_time, numOfBallots, useBlockchain):
+    def __init__(self, title, description, numOfBallots, useBlockchain):
         self.title = title
         self.description = description
-        self.start_time = start_time
-        self.end_time = end_time
         self.num_of_ballots = numOfBallots
         self.useBlockchain = useBlockchain
 
