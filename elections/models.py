@@ -23,6 +23,7 @@ class Election(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     use_blockchain = models.BooleanField(default=False)
     results_published = models.BooleanField(default=False)
+    votes_cast = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title

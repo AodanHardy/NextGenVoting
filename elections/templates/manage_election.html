@@ -9,6 +9,10 @@
         <span class="status {{ election.status }}">{{ election.get_status_display }}</span>
     </p>
 
+    {% if election.status == 'active' or election.status == 'completed' %}
+         <p class="manage-election-vote-count"><strong>Vote Count:</strong> {{ election.votes_cast }}</p>
+    {% endif %}
+
     <div class="manage-election-actions">
         {% if election.status == 'pending' %}
             <form method="post">
@@ -20,8 +24,7 @@
                 {% csrf_token %}
                 <button type="submit" name="action" value="end" class="btn-manage-election btn-end">End Election</button>
             </form>
-        {% else %}
-            <p class="manage-election-completed">This election is completed.</p>
+
         {% endif %}
     </div>
 
@@ -46,7 +49,7 @@
 
     <hr>
 
-    <h3 class="manage-election-subtitle">Voters</h3>
+    <h3 class="manage-election-subtitle">Voters: {{ voters_count }}</h3>
     <ul class="manage-election-voters">
         {% for voter in election.voters.all %}
             <li class="voter-item">{{ voter.name }} ({{ voter.email }})</li>
