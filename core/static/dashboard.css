@@ -1,9 +1,9 @@
-/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     margin: 0;
     padding: 0;
+    min-height: 100%;
 }
 
 .navbar {
@@ -44,6 +44,7 @@ body {
 
 .content {
     padding: 60px 60px 100px;
+    max-height: 100%;
 }
 
 footer {
@@ -51,10 +52,10 @@ footer {
     color: white;
     text-align: center;
     padding: 10px;
-    position: fixed;
     bottom: 0;
     width: 100%;
     border-top: 2px solid #1a242f;
+    position: fixed;
 }
 
 a, button, input {
@@ -83,6 +84,38 @@ input {
     margin: 10px 0;
     box-sizing: border-box;
 }
+
+/** Dashboard **/
+
+.election-card {
+    padding: 20px;
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #333;
+    background-color: #f0f0f0;
+    margin-bottom: 20px;
+}
+
+.election-card:hover {
+    transform: translateY(-5px);
+}
+
+.election-card-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.election-card-description {
+    font-size: 24px;
+    color: #555;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+
 
 /* election review page */
 .review-container {
@@ -146,5 +179,109 @@ li {
 }
 
 
+/** manage elections page **/
+.manage-election-container {
+    max-width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.manage-election-title {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.manage-election-description {
+    font-size: 30px;
+    margin-bottom: 10px;
+     word-wrap: break-word;
+}
+
+.manage-election-status {
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+.manage-election-vote-count{
+    font-size: 30px;
+    margin-bottom: 20px;
+
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.status.pending {
+    background-color: #ffc107;
+    color: white;
+}
+
+.status.active {
+    background-color: #28a745;
+    color: white;
+}
+
+.status.completed {
+    background-color: #dc3545;
+    color: white;
+}
+
+.manage-election-actions {
+    margin-bottom: 20px;
+}
+
+.btn-manage-election {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.btn-start {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-size: 30px;
+}
+
+.btn-end {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    font-size: 30px;
+}
+
+.manage-election-subtitle {
+    font-size: 24px;
+    margin-top: 30px;
+}
+
+.manage-election-subsubtitle {
+    font-size: 20px;
+    margin-top: 15px;
+}
+
+.manage-election-ballots,
+.manage-election-voters {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.ballot-item,
+.voter-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.candidate-item {
+    margin-left: 15px;
+    font-style: italic;
+}
 
 
