@@ -1,0 +1,31 @@
+{% extends 'votebase.html' %}
+
+{% block title %}Voting Introduction{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-4">
+    <h1 class="text-center">Welcome, {{ voter.name }}!</h1>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2 class="card-title">Election Summary</h2>
+            <p class="card-text"><strong>Title:</strong> {{ election.title }}</p>
+            <p class="card-text"><strong>Description:</strong> {{ election.description }}</p>
+
+            <h3>Ballots</h3>
+            <ul class="list-group">
+                {% for ballot in ballots %}
+                    <li class="list-group-item">{{ ballot.title }}</li>
+                {% endfor %}
+            </ul>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-success">Start Voting</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

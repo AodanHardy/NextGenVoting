@@ -6,4 +6,5 @@ urlpatterns = [
     path("", include('core.urls')),
     path("dashboard", include('elections.urls')),
     path('dashboard/', include(('elections.urls', 'elections'), namespace='elections')),
+    path('vote/', include(('voting.urls', 'voting'), namespace='vote')),
 ]
