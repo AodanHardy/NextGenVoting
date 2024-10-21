@@ -79,7 +79,6 @@ def election_details(request):
 
             request.session['election'] = electionData
 
-            # Redirect to the next form
             return redirect('add_ballots')
     else:
         form = ElectionDetailsForm()
@@ -90,7 +89,7 @@ def election_details(request):
 
 @login_required
 def add_ballots(request):
-    # Retrieve the election object from the session
+    # get the election object from the session
     election_data = request.session.get('election')
     if not election_data:
         return redirect('elections:election_details')
