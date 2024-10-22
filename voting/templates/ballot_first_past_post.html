@@ -1,19 +1,20 @@
 {% extends 'votebase.html' %}
 
 {% block content %}
-<form method="POST" action="">
+<form method="POST" action="" class="ballot-form">
     {% csrf_token %}
-    <h3>{{ ballot.title }}</h3>
-    <p>{{ ballot.description }}</p>
+    <h3 class="ballot-title">{{ ballot.title }}</h3>
+    <p class="ballot-description">{{ ballot.description }}</p>
 
-    {% for candidate in ballot.candidates %}
-        <div>
-            <input type="radio" id="candidate_{{ candidate.id }}" name="selected_candidate" value="{{ candidate.id }}">
-            <label for="candidate_{{ candidate.id }}">{{ candidate }}</label>
-        </div>
-    {% endfor %}
+    <div class="candidates-list">
+        {% for candidate in candidates %}
+            <div class="candidate-item">
+                <input type="radio" id="candidate_{{ candidate.id }}" name="selected_candidate" value="{{ candidate.id }}" class="candidate-input">
+                <label for="candidate_{{ candidate.id }}" class="candidate-label">{{ candidate.title }}</label>
+            </div>
+        {% endfor %}
+    </div>
 
-    <button type="submit" class="btn btn-primary">Submit Vote</button>
+    <button type="submit" class="btn btn-primary ballot-submit">Submit Vote</button>
 </form>
-
 {% endblock %}

@@ -1,0 +1,64 @@
+/* Style for the entire ballot form */
+.ballot-form {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px; /* Keep the original width */
+    height: auto; /* Allow the height to adjust naturally */
+    min-height: 600px; /* Set a minimum height for more space */
+    margin: 20px auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* For positioning the submit button */
+}
+
+/* Title of the ballot */
+.ballot-title {
+    font-size: 60px; /* Increased font size */
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+/* List of candidates */
+.candidates-list {
+    margin-bottom: 60px; /* Space for the fixed button */
+}
+
+/* Individual candidate item */
+.candidate-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Adjusted margin for spacing */
+}
+
+/* Styling for radio buttons */
+.candidate-input {
+    margin-right: 10px;
+}
+
+/* Styling for candidate labels */
+.candidate-label {
+    font-size: 40px; /* Increased font size */
+}
+
+/* Submit button style */
+.ballot-submit {
+    position: absolute; /* Position the button at the bottom */
+    bottom: 20px; /* Adjust distance from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Correct centering */
+    width: calc(100% - 40px); /* Full width minus padding */
+    padding: 12px; /* Increased padding for a larger button */
+    font-size: 18px; /* Increased font size */
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ballot-submit:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+}

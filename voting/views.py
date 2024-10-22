@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from elections.models import Election
-from voting.models import Ballot, Voter
+from voting.models import Ballot, Voter, Candidate
 
 
 # Create your views here.
@@ -64,12 +64,16 @@ def voting_ballot(request, vote_id, ballot_index):
     # get the current ballot
     ballot_data = ballots[ballot_index]
 
+    # Getting candidates from candidate ids
+    candidate_ids = ballot_data.get('candidates', [])
+    candidates = Candidate.objects.filter(id__in=candidate_ids)
+
     # Once a vote has been submitted
     if request.method == 'POST':
 
-        selected_candidates = request.POST.getlist('selected_candidates')
+        selected_candidates = request.POST.getlist('selected_candidate')
 
-        ballot_data.voteData.append(selected_candidates)
+        ballot_data.get('voteData').append(selected_candidates)
 
         request.session['voter_data'] = voter_data
 
@@ -97,6 +101,7 @@ def voting_ballot(request, vote_id, ballot_index):
     return render(request, template_name, {
         'ballot': ballot_data,
         'voter_data': voter_data,
-        'ballot_index': ballot_index
+        'ballot_index': ballot_index,
+        'candidates': candidates,
     })
 
