@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 
 from elections.models import Election
 from voting.models import Ballot, Voter
-from voting.utils import VoterData, VoteBallotData
 
 
 # Create your views here.
@@ -65,6 +64,7 @@ def voting_ballot(request, vote_id, ballot_index):
     # get the current ballot
     ballot_data = ballots[ballot_index]
 
+    # Once a vote has been submitted
     if request.method == 'POST':
 
         selected_candidates = request.POST.getlist('selected_candidates')
@@ -83,14 +83,14 @@ def voting_ballot(request, vote_id, ballot_index):
             # All ballots are done
             return redirect('voting:vote_summary', vote_id=vote_id)
 
-    # Render the appropriate template for the voting type
+    # open different html file depending on voting type
     voting_type = ballot_data.get('voting_type')
-    if voting_type == 'FFP':
+    if voting_type == 'FPP':
         template_name = 'ballot_first_past_post.html'
     elif voting_type == 'RCV':
         template_name = 'ballot_ranked_choice.html'
     elif voting_type == 'YN':
-        template_name = 'ballot_generic.html'
+        template_name = 'ballot_yes_no.html'
     else:
         return HttpResponse('Invalid Voting choice.')
 

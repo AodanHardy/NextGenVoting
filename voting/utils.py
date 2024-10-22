@@ -1,4 +1,5 @@
 
+# i ended up not using these
 class VoterData:
     def __init__(self, voterId, electionId):
         self.voter_id = voterId

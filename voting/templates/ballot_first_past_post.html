@@ -1,0 +1,19 @@
+{% extends 'votebase.html' %}
+
+{% block content %}
+<form method="POST" action="">
+    {% csrf_token %}
+    <h3>{{ ballot.title }}</h3>
+    <p>{{ ballot.description }}</p>
+
+    {% for candidate in ballot.candidates %}
+        <div>
+            <input type="radio" id="candidate_{{ candidate.id }}" name="selected_candidate" value="{{ candidate.id }}">
+            <label for="candidate_{{ candidate.id }}">{{ candidate }}</label>
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit Vote</button>
+</form>
+
+{% endblock %}
