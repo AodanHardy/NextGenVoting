@@ -1,1 +1,25 @@
-yes or no
+{% extends 'votebase.html' %}
+
+{% block content %}
+<div class="ballot-form">
+    <form method="POST" action="">
+        {% csrf_token %}
+        <h3 class="ballot-title">{{ ballot.title }}</h3>
+        <p class="ballot-description">{{ ballot.description }}</p>
+
+        <div class="candidates-list">
+            <div class="candidate-item">
+                <input type="radio" class="candidate-input" id="yes" name="selected_choice" value="yes">
+                <label class="candidate-label" for="yes">Yes</label>
+            </div>
+
+            <div class="candidate-item">
+                <input type="radio" class="candidate-input" id="no" name="selected_choice" value="no">
+                <label class="candidate-label" for="no">No</label>
+            </div>
+        </div>
+
+        <button type="submit" class="ballot-submit">Submit Vote</button>
+    </form>
+</div>
+{% endblock %}

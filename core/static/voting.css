@@ -32,10 +32,7 @@
     margin-bottom: 15px; /* Adjusted margin for spacing */
 }
 
-/* Styling for radio buttons */
-.candidate-input {
-    margin-right: 10px;
-}
+
 
 /* Styling for candidate labels */
 .candidate-label {
@@ -61,4 +58,10 @@
 
 .ballot-submit:hover {
     background-color: #0056b3; /* Darker shade for hover */
+}
+
+
+.candidate-input {
+    transform: scale(2.5);
+    margin-right: 25px;
 }
