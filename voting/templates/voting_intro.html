@@ -21,7 +21,9 @@
             </ul>
 
             <div class="text-center mt-4">
-                <button class="btn btn-success">Start Voting</button>
+                <form action="{% url 'voting:voting_ballot' vote_id=voter.id ballot_index=0 %}" method="get">
+                    <button type="submit" class="btn btn-primary">Start Voting</button>
+                </form>
             </div>
         </div>
     </div>

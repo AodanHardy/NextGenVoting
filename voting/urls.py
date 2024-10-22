@@ -4,8 +4,8 @@ from voting import views
 
 urlpatterns = [
     # Voting intro page
-    path('<uuid:vote_id>/', views.voting_intro, name='voting_intro'),
+    path('<uuid:voter_id>/', views.voting_intro, name='voting_intro'),
 
-    # Ballot page (for individual ballots)
-    path('<uuid:vote_id>/ballot/<int:ballot_id>/', views.voting_ballot, name='voting_ballot'),
+    path('<uuid:vote_id>/ballot/<int:ballot_index>/', views.voting_ballot, name='voting_ballot')
+
 ]
