@@ -48,11 +48,7 @@ class Voter(models.Model):
 class Vote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ballot = models.ForeignKey('Ballot', on_delete=models.CASCADE, related_name='votes')
-    voter = models.ForeignKey(Voter, on_delete=models.CASCADE, related_name='votes')
     vote_data = models.JSONField()
     blockchain_transaction_id = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    verified = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Vote by {self.voter.name} for ballot {self.ballot.title}"

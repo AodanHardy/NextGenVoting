@@ -23,6 +23,7 @@ def voting_intro(request, voter_id):
         ballots = election.ballots.all()
         for ballot in ballots:
             ballot_data = {
+                'id': ballot.id,
                 'title': ballot.title,
                 'description': ballot.description,
                 'voting_type': ballot.voting_type,
@@ -72,7 +73,6 @@ def voting_ballot(request, vote_id, ballot_index):
     # Once a vote has been submitted
     if request.method == 'POST':
 
-
         # check if ranked choice
         if ballot_data.get('voting_type') == 'RCV':
             rankedChoiceDict = {}
@@ -90,7 +90,6 @@ def voting_ballot(request, vote_id, ballot_index):
             selected_candidates = request.POST.getlist('selected_candidate')
 
             ballot_data.get('voteData').append(selected_candidates)
-
 
         request.session['voter_data'] = voter_data
 
@@ -122,3 +121,37 @@ def voting_ballot(request, vote_id, ballot_index):
         'candidates': candidates,
     })
 
+
+def vote_summary(request, vote_id):
+    # gather data from session
+    voter_data = request.session.get('voter_data')
+    ballots = voter_data.get('ballots')
+    if request.method == 'POST':
+        for ballot in ballots:
+
+            # getting data in correct json format
+
+            # FPP format : {"id": 1}
+            if ballot.get('voting_type') == 'FPP':
+                voteData = ballot.get('voteData')
+                voteData = voteData[0][0]
+                ballotVoteDict = {"id": int(voteData)}
+
+            # RCV format: {"rankings": [3, 2, 1]}
+            elif ballot.get('voting_type') == 'RCV':
+                voteData = ballot.get('voteData')
+                voteData = voteData[0]
+                ballotVoteDict = {"rankings": voteData}
+
+            # YN format : {"vote": "yes"}
+            elif ballot.get('voting_type') == 'YN':
+                voteData = ballot.get('voteData')
+                voteData = voteData[0][0]
+                ballotVoteDict = {"vote": voteData}
+
+            # get ballot id
+            ballotId = ballot.get('id')
+            print()
+
+
+    return render(request, 'vote_summary.html')
