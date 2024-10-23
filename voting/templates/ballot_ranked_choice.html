@@ -12,7 +12,7 @@
             {% for candidate in candidates %}
                 <div class="ranked-candidate-item">
                     <label class="candidate-label">{{ candidate.title }}</label>
-                    <select name="rank_{{ candidate.id }}" class="candidate-select">
+                    <select name="{{ candidate.id }}" class="candidate-select">
                         <option value="">Rank</option>
                         {% for rank in candidates|length|get_range %}
                             <option value="{{ rank }}">{{ rank }}</option>

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 
 from elections.models import Election
 from voting.models import Ballot, Voter, Candidate
+from voting.utils import get_ranked_order
 
 
 # Create your views here.
@@ -71,9 +72,25 @@ def voting_ballot(request, vote_id, ballot_index):
     # Once a vote has been submitted
     if request.method == 'POST':
 
-        selected_candidates = request.POST.getlist('selected_candidate')
 
-        ballot_data.get('voteData').append(selected_candidates)
+        # check if ranked choice
+        if ballot_data.get('voting_type') == 'RCV':
+            rankedChoiceDict = {}
+            for candidate_id in candidate_ids:
+                rc_vote = request.POST.get(str(candidate_id))
+
+                if rc_vote is not "":
+                    rankedChoiceDict[candidate_id] = rc_vote
+
+            ballot_data.get('voteData').append(get_ranked_order(rankedChoiceDict))
+
+
+        else:
+            # non-RCV ballots
+            selected_candidates = request.POST.getlist('selected_candidate')
+
+            ballot_data.get('voteData').append(selected_candidates)
+
 
         request.session['voter_data'] = voter_data
 
