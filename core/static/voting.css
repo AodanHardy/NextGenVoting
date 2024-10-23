@@ -29,7 +29,13 @@
 .candidate-item {
     display: flex;
     align-items: center;
-    margin-bottom: 15px; /* Adjusted margin for spacing */
+    margin-bottom: 15px;
+}
+.ranked-candidate-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 
@@ -64,4 +70,14 @@
 .candidate-input {
     transform: scale(2.5);
     margin-right: 25px;
+}
+
+.candidate-select {
+    padding: 8px;
+    font-size: 20px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    text-align: center;
 }

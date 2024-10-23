@@ -1,1 +1,29 @@
-ranked choice
+{% extends 'votebase.html' %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="ballot-form">
+    <form method="POST">
+        {% csrf_token %}
+        <h3 class="ballot-title">{{ ballot.title }}</h3>
+        <p class="ballot-description">{{ ballot.description }}</p>
+
+        <div class="candidates-list">
+            {% for candidate in candidates %}
+                <div class="ranked-candidate-item">
+                    <label class="candidate-label">{{ candidate.title }}</label>
+                    <select name="rank_{{ candidate.id }}" class="candidate-select">
+                        <option value="">Rank</option>
+                        {% for rank in candidates|length|get_range %}
+                            <option value="{{ rank }}">{{ rank }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="ballot-submit">Submit</button>
+    </form>
+</div>
+
+{% endblock %}
