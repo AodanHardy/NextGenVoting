@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from elections.models import Election
-from voting.models import Ballot, Voter, Candidate
+from voting.models import Ballot, Voter, Candidate, Vote
 from voting.utils import get_ranked_order
 
 
@@ -79,7 +79,7 @@ def voting_ballot(request, vote_id, ballot_index):
             for candidate_id in candidate_ids:
                 rc_vote = request.POST.get(str(candidate_id))
 
-                if rc_vote is not "":
+                if rc_vote != "":
                     rankedChoiceDict[candidate_id] = rc_vote
 
             ballot_data.get('voteData').append(get_ranked_order(rankedChoiceDict))
@@ -130,6 +130,7 @@ def vote_summary(request, vote_id):
         for ballot in ballots:
 
             # getting data in correct json format
+            ballotVoteDict = ""
 
             # FPP format : {"id": 1}
             if ballot.get('voting_type') == 'FPP':
@@ -149,9 +150,31 @@ def vote_summary(request, vote_id):
                 voteData = voteData[0][0]
                 ballotVoteDict = {"vote": voteData}
 
-            # get ballot id
+            # get ballot
             ballotId = ballot.get('id')
-            print()
+            ballotobj = Ballot.objects.get(id=ballotId)
+
+            '''
+             At this point, the the ballot data is set and we need to save the vote data to the database
+             
+             take ballot id, create a new vote object with ballot id and vote data
+            '''
+            # creating votes
+            Vote.objects.create(
+                ballot=ballotobj,
+                vote_data=ballotVoteDict
+            )
+
+        '''
+        after all ballots have been uploaded, i need to update the voted column of the voter table
+        '''
+        voterObj = Voter.objects.get(id=vote_id)
+        voterObj.voted = True
+        voterObj.save()
 
 
-    return render(request, 'vote_summary.html')
+
+
+
+    return render(request, 'vote_summary.html',
+                  {'ballots': ballots})

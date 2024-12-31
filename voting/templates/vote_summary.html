@@ -1,6 +1,15 @@
-vote summary
+{% extends 'votebase.html' %}
+
+{% block content %}
 
 <form method="post">
     {% csrf_token %}
     <button type="submit">test</button>
+
+
+        {% for ballot in ballots %}
+            <h2>{{ ballot.candidates }}</h2>
+        {% endfor %}
     </form>
+
+{% endblock %}
