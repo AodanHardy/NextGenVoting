@@ -12,9 +12,31 @@ def voting_intro(request, voter_id):
 
     # put in check to see if election is not active or user has already voted
 
+    voter = Voter.objects.get(id=voter_id)
+    election = voter.election
+
+    # Checks to see if user can vote
+    status = election.status
+    if status != "active":
+        if status == "completed":
+            message = "This Election has ended"
+            return render(request, "vote_error.html",
+                          {'message': message})
+        elif status == "pending":
+            message = "This Election has not started yet"
+            return render(request, "vote_error.html",
+                          {'message': message})
+        else:
+            message = "There is an error with this election"
+            return render(request, "vote_error.html",
+                          {'message': message})
+
+    if voter.voted:
+        message = "This Voter has already voted"
+        return render(request, "vote_error.html",
+                      {'message': message})
+
     try:
-        voter = Voter.objects.get(id=voter_id)
-        election = voter.election
 
         # Set voter data object
         voter_data = {
