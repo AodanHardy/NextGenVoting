@@ -1,3 +1,7 @@
+
+
+
+
 class BallotData:
     def __init__(self, title, voting_type):
         self.title = title

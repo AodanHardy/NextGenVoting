@@ -35,10 +35,21 @@ def manage_election(request, election_id):
             election.start_time = timezone.now()
             election.status = 'active'
             election.save()
+
+            # trigger to send out emails here
+
         elif action == 'end':
             election.end_time = timezone.now()
             election.status = 'completed'
             election.save()
+
+            # trigger to start counting process
+
+            # fetch votes
+
+            # call counting algorithm
+
+            # save results
 
         return redirect('manage_election', election_id=election.id)
 
