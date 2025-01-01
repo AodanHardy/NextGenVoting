@@ -177,10 +177,9 @@ def vote_summary(request, vote_id):
           And then increment the votes cast column of the election table
         '''
 
-
-        print()
-        #electionObj = Election.objects.get()
-
+        electionObj = Election.objects.get(id=voter_data.get("election_id"))
+        electionObj.votes_cast += 1
+        electionObj.save()
 
         return redirect(reverse('voting:vote_confirmation'))
 
