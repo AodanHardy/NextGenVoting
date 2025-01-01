@@ -9,6 +9,9 @@ from voting.utils import get_ranked_order
 
 # Create your views here.
 def voting_intro(request, voter_id):
+
+    # put in check to see if election is not active or user has already voted
+
     try:
         voter = Voter.objects.get(id=voter_id)
         election = voter.election
@@ -88,6 +91,8 @@ def voting_ballot(request, vote_id, ballot_index):
 
         else:
             # non-RCV ballots
+
+            # here is there the candidate id is selected
             selected_candidates = request.POST.getlist('selected_candidate')
 
             ballot_data.get('voteData').append(selected_candidates)
@@ -127,6 +132,18 @@ def vote_summary(request, vote_id):
     # gather data from session
     voter_data = request.session.get('voter_data')
     ballots = voter_data.get('ballots')
+
+    for ballot in ballots:
+        selectedCandidates = ballot.get('voteData')
+        candidateNames = []
+        for id in selectedCandidates:
+            intId = int(id[0])
+            # get the candidate name
+            candidateObj = Candidate.objects.get(id=intId)
+            candidateNames.append(candidateObj.title)
+        ballot['candidateNames'] = candidateNames
+
+    print()
     if request.method == 'POST':
         for ballot in ballots:
 
