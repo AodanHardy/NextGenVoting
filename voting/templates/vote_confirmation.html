@@ -1,0 +1,15 @@
+{% extends 'votebase.html' %}
+
+{% block content %}
+
+<form method="post">
+    {% csrf_token %}
+
+
+<div class="container mt-4">
+    <h1 class="text-center">Your vote is complete</h1>
+    <h2 class="text-center">Thank you</h2>
+</div>
+    </form>
+
+{% endblock %}

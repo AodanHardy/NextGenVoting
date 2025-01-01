@@ -4,12 +4,37 @@
 
 <form method="post">
     {% csrf_token %}
-    <button type="submit">test</button>
 
 
-        {% for ballot in ballots %}
-            <h2>{{ ballot.candidates }}</h2>
-        {% endfor %}
-    </form>
+<div class="container mt-4">
+    <h1 class="text-center">Vote Summary</h1>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2 class="card-title">Your Votes</h2>
+            <p class="card-text">Below is a summary of your selections for each ballot:</p>
+
+            <h3>Ballots</h3>
+            <ul class="list-group">
+                {% for ballot in ballots %}
+                    <li class="list-group-item">
+                        <h5>{{ ballot.title }}</h5>
+                        <ul>
+                            {% for id in ballot.candidates %}
+                                <li>Candidate {{ id }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success">Submit Votes</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</form>
 
 {% endblock %}

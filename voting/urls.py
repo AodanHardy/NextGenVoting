@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('<uuid:vote_id>/ballot/<int:ballot_index>/', views.voting_ballot, name='voting_ballot'),
 
-    path('<uuid:vote_id>/vote_summary', views.vote_summary, name='vote_summary')
+    path('<uuid:vote_id>/vote_summary', views.vote_summary, name='vote_summary'),
+
+    path('vote_confirmation/', views.vote_confirmation, name='vote_confirmation')
 
 ]

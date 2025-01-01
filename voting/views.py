@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from elections.models import Election
 from voting.models import Ballot, Voter, Candidate, Vote
@@ -172,9 +173,20 @@ def vote_summary(request, vote_id):
         voterObj.voted = True
         voterObj.save()
 
+        '''
+          And then increment the votes cast column of the election table
+        '''
 
 
+        print()
+        #electionObj = Election.objects.get()
 
+
+        return redirect(reverse('voting:vote_confirmation'))
 
     return render(request, 'vote_summary.html',
                   {'ballots': ballots})
+
+
+def vote_confirmation(request):
+    return render(request, 'vote_confirmation.html')
