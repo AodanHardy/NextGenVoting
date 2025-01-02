@@ -8,15 +8,12 @@
         <p class="ballot-description">{{ ballot.description }}</p>
 
         <div class="candidates-list">
+            {% for candidate in candidates %}
             <div class="candidate-item">
-                <input type="radio" class="candidate-input" id="yes" name="selected_candidate" value="yes">
-                <label class="candidate-label" for="yes">Yes</label>
+                <input type="radio" id="candidate_{{ candidate.id }}" name="selected_candidate" value="{{ candidate.id }}" class="candidate-input">
+                <label for="candidate_{{ candidate.id }}" class="candidate-label">{{ candidate.title }}</label>
             </div>
-
-            <div class="candidate-item">
-                <input type="radio" class="candidate-input" id="no" name="selected_choice" value="no">
-                <label class="candidate-label" for="no">No</label>
-            </div>
+        {% endfor %}
         </div>
 
         <button type="submit" class="ballot-submit">Submit Vote</button>

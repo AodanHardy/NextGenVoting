@@ -1,14 +1,18 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from algorithms.firstPastThePost import FPTPVoteProcessor
+from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
-from .models import Election
-from voting.models import Ballot, Candidate, Voter
+from .models import Election, ElectionResults
+from voting.models import Ballot, Candidate, Voter, Vote
 from django.contrib.auth.decorators import login_required
 
 import csv
 from .forms import VoterUploadForm
-from .utils import VoterData
+from .utils import VoterData, getWinningVote
 from .utils import ElectionData, BallotData
 
 
@@ -25,8 +29,6 @@ def manage_election(request, election_id):
     election = get_object_or_404(Election, id=election_id, user=request.user)
     voterCount = len(election.voters.all())
 
-    # maybe use this variable later to limit amount of voters shown on screen
-    voterList = election.voters.all()
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -45,15 +47,87 @@ def manage_election(request, election_id):
 
             # trigger to start counting process
 
-            # fetch votes
+            # get all ballots form this election
+            ballots = Ballot.objects.filter(election=election_id)
 
-            # call counting algorithm
+            # for loop for each ballot in election
+            for ballot in ballots:
 
-            # save results
+                # fetch votes
+                votes = Vote.objects.filter(ballot=ballot)
+
+                # prep data
+                vote_list = []
+                for vote in votes:
+                    vote_list.append(vote.vote_data)
+
+                candidates_list = Candidate.objects.filter(ballot=ballot)
+                candidates_dict = {}
+                for candidate in candidates_list:
+                    candidates_dict[candidate.id] = candidate.title
+
+                '''
+                    at this point i have all the votes and candidtes
+                    
+                    i now need to update the algorithms to take this data and return results
+                    
+                    then check each voting type and pass it too the algorithms 
+                '''
+
+                # call counting algorithm
+
+                result = ElectionResults()
+                result.election = election
+                result.ballot = ballot
+
+                if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
+                    processor = FPTPVoteProcessor(candidates_dict, vote_list)
+                    result.results_data = processor.result
+
+                elif ballot.voting_type == "RCV":
+                    processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
+                    result.results_data = processor.finalize_results()
+
+                # save results
+                result.save()
+                election.results_published = True
+                election.save()
+
+                print()
+
+
 
         return redirect('manage_election', election_id=election.id)
 
-    return render(request, 'manage_election.html', {'election': election, 'voters_count': voterCount})
+    # get winners if finished
+    ballot_results = []
+
+    # Prepare results
+    for ballot in election.ballots.all():
+
+        results = ballot.results.all()
+        ballot_winners = []
+        for result in results:
+
+            if ballot.voting_type == "RCV":
+                winners = result.results_data.get('winners', [])
+
+            elif ballot.voting_type == "FPP" or ballot.voting_type == "YN":
+                winnersIds = getWinningVote(result.results_data)
+                winners = []
+                for id in winnersIds:
+                    winners.append(Candidate.objects.get(id=id))
+
+
+            ballot_winners.extend(winners)
+
+        ballot_results.append({'ballot': ballot,
+                               'winners': ballot_winners,
+                               'no_of_winners': ballot.number_of_winners})
+
+    return render(request, 'manage_election.html', {'election': election,
+                                                    'voters_count': voterCount,
+                                                    'ballot_results': ballot_results})
 
 
 '''' The rest of the views are for the forms for creating an election '''
