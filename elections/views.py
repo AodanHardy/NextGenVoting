@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 import csv
 from .forms import VoterUploadForm
-from .utils import VoterData
+from .utils import VoterData, getWinningVote
 from .utils import ElectionData, BallotData
 
 
@@ -104,10 +104,21 @@ def manage_election(request, election_id):
 
     # Prepare results
     for ballot in election.ballots.all():
+
         results = ballot.results.all()
         ballot_winners = []
         for result in results:
-            winners = result.results_data.get('winners', [])
+
+            if ballot.voting_type == "RCV":
+                winners = result.results_data.get('winners', [])
+
+            elif ballot.voting_type == "FPP":
+                winnersIds = getWinningVote(result.results_data)
+                winners = []
+                for id in winnersIds:
+                    winners.append(Candidate.objects.get(id=id))
+
+
             ballot_winners.extend(winners)
 
         ballot_results.append({'ballot': ballot,

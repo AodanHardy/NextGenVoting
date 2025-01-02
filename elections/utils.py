@@ -2,6 +2,12 @@
 
 
 
+def getWinningVote(vote_dict):
+    max_votes = max(vote_dict.values())
+    winners = [key for key, value in vote_dict.items() if value == max_votes]
+    return winners
+
+
 class BallotData:
     def __init__(self, title, voting_type):
         self.title = title
