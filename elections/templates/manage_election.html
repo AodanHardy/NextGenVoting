@@ -49,19 +49,17 @@
 
                     <h3 class="manage-election-subtitle">Results</h3>
 
-                    {% for ballot in ballot_results %}
-                        {% if ballot.no_of_winners  == 1%}
-                            <h4 class="manage-election-subsubtitle">Winner</h4>
-                        {% else %}
-                            <h4 class="manage-election-subsubtitle">Winners</h4>
-                        {% endif %}
+                    {% if ballot.no_of_winners  == 1%}
+                        <h4 class="manage-election-subsubtitle">Winner</h4>
+                    {% else %}
+                        <h4 class="manage-election-subsubtitle">Winners</h4>
+                    {% endif %}
 
-                            <ul class="manage-election-candidates">
-                                {% for winner in ballot.winners %}
-                                    <li class="candidate-item">{{ winner }}</li>
-                                {% endfor %}
-                            </ul>
-                    {% endfor %}
+                        <ul class="manage-election-candidates">
+                            {% for winner in ballot.winners %}
+                                <li class="candidate-item">{{ winner }}</li>
+                            {% endfor %}
+                        </ul>
 
                 {% endif %}
             </li>
