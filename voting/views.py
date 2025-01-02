@@ -184,11 +184,11 @@ def vote_summary(request, vote_id):
                 voteData = voteData[0]
                 ballotVoteDict = {"rankings": voteData}
 
-            # YN format : {"vote": "yes"}
+            # YN format : {"id": "281"}
             elif ballot.get('voting_type') == 'YN':
                 voteData = ballot.get('voteData')
                 voteData = voteData[0][0]
-                ballotVoteDict = {"vote": voteData}
+                ballotVoteDict = {"id": int(voteData)}
 
             # get ballot
             ballotId = ballot.get('id')

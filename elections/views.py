@@ -80,7 +80,7 @@ def manage_election(request, election_id):
                 result.election = election
                 result.ballot = ballot
 
-                if ballot.voting_type == "FPP":
+                if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                     processor = FPTPVoteProcessor(candidates_dict, vote_list)
                     result.results_data = processor.result
 
@@ -112,7 +112,7 @@ def manage_election(request, election_id):
             if ballot.voting_type == "RCV":
                 winners = result.results_data.get('winners', [])
 
-            elif ballot.voting_type == "FPP":
+            elif ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                 winnersIds = getWinningVote(result.results_data)
                 winners = []
                 for id in winnersIds:
