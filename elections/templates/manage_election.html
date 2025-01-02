@@ -32,17 +32,38 @@
 
     <h3 class="manage-election-subtitle">Ballots</h3>
     <ul class="manage-election-ballots">
-        {% for ballot in election.ballots.all %}
+        {% for ballot in ballot_results %}
             <li class="ballot-item">
-                <strong>Ballot Title:</strong> {{ ballot.title }}<br>
-                <strong>Voting Type:</strong> {{ ballot.get_voting_type_display }}<br>
+                <strong>Ballot Title:</strong> {{ ballot.ballot.title }}<br>
+                <strong>Voting Type:</strong> {{ ballot.ballot.get_voting_type_display }}<br>
 
                 <h4 class="manage-election-subsubtitle">Candidates</h4>
                 <ul class="manage-election-candidates">
-                    {% for candidate in ballot.candidates.all %}
+                    {% for candidate in ballot.ballot.candidates.all %}
                         <li class="candidate-item">{{ candidate.title }}</li>
                     {% endfor %}
                 </ul>
+
+                <!-- code for results summary -->
+                {% if election.results_published %}
+
+                    <h3 class="manage-election-subtitle">Results</h3>
+
+                    {% for ballot in ballot_results %}
+                        {% if ballot.no_of_winners  == 1%}
+                            <h4 class="manage-election-subsubtitle">Winner</h4>
+                        {% else %}
+                            <h4 class="manage-election-subsubtitle">Winners</h4>
+                        {% endif %}
+
+                            <ul class="manage-election-candidates">
+                                {% for winner in ballot.winners %}
+                                    <li class="candidate-item">{{ winner }}</li>
+                                {% endfor %}
+                            </ul>
+                    {% endfor %}
+
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
@@ -51,7 +72,7 @@
 
     <h3 class="manage-election-subtitle">Voters: {{ voters_count }}</h3>
     <ul class="manage-election-voters">
-        {% for voter in election.voters.all %}
+        {% for voter in election.voters.all|slice:":10" %}
             <li class="voter-item">{{ voter.name }} ({{ voter.email }})</li>
         {% endfor %}
     </ul>

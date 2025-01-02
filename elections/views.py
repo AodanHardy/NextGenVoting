@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
@@ -27,8 +29,6 @@ def manage_election(request, election_id):
     election = get_object_or_404(Election, id=election_id, user=request.user)
     voterCount = len(election.voters.all())
 
-    # maybe use this variable later to limit amount of voters shown on screen
-    voterList = election.voters.all()
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -90,7 +90,8 @@ def manage_election(request, election_id):
 
                 # save results
                 result.save()
-                # election.results_published = True
+                election.results_published = True
+                election.save()
 
                 print()
 
@@ -98,7 +99,24 @@ def manage_election(request, election_id):
 
         return redirect('manage_election', election_id=election.id)
 
-    return render(request, 'manage_election.html', {'election': election, 'voters_count': voterCount})
+    # get winners if finished
+    ballot_results = []
+
+    # Prepare results
+    for ballot in election.ballots.all():
+        results = ballot.results.all()
+        ballot_winners = []
+        for result in results:
+            winners = result.results_data.get('winners', [])
+            ballot_winners.extend(winners)
+
+        ballot_results.append({'ballot': ballot,
+                               'winners': ballot_winners,
+                               'no_of_winners': ballot.number_of_winners})
+
+    return render(request, 'manage_election.html', {'election': election,
+                                                    'voters_count': voterCount,
+                                                    'ballot_results': ballot_results})
 
 
 '''' The rest of the views are for the forms for creating an election '''
