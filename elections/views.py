@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from algorithms.firstPastThePost import FPTPVoteProcessor
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
-from .models import Election
-from voting.models import Ballot, Candidate, Voter
+from .models import Election, ElectionResults
+from voting.models import Ballot, Candidate, Voter, Vote
 from django.contrib.auth.decorators import login_required
 
 import csv
@@ -45,11 +46,51 @@ def manage_election(request, election_id):
 
             # trigger to start counting process
 
-            # fetch votes
+            # get all ballots form this election
+            ballots = Ballot.objects.filter(election=election_id)
 
-            # call counting algorithm
+            # for loop for each ballot in election
+            for ballot in ballots:
 
-            # save results
+                # fetch votes
+                votes = Vote.objects.filter(ballot=ballot)
+
+                # prep data
+                vote_list = []
+                for vote in votes:
+                    vote_list.append(vote.vote_data)
+
+                candidates_list = Candidate.objects.filter(ballot=ballot)
+                candidates_dict = {}
+                for candidate in candidates_list:
+                    candidates_dict[candidate.id] = candidate.title
+
+                '''
+                    at this point i have all the votes and candidtes
+                    
+                    i now need to update the algorithms to take this data and return results
+                    
+                    then check each voting type and pass it too the algorithms 
+                '''
+
+                # call counting algorithm
+
+                result = ElectionResults()
+                result.election = election
+                result.ballot = ballot
+
+                if ballot.voting_type == "FPP":
+                    processor = FPTPVoteProcessor(candidates_dict, vote_list)
+                    result.results_data = processor.result
+
+
+                # save results
+                result.save()
+                # election.results_published = True
+
+                print()
+
+
 
         return redirect('manage_election', election_id=election.id)
 
