@@ -76,7 +76,7 @@ class RankedChoiceVoteProcessor:
             "winners": self.winners
         }
 
-        return json.dumps(result_data)
+        return result_data
 
     def processVotes(self):
         self._initialize_votes()
@@ -90,13 +90,10 @@ class RankedChoiceVoteProcessor:
 
     def _initialize_votes(self):
         # Convert the JSON into a usable format and initialize vote counts
-        for vote_str in self.vote_data:
-            try:
-                vote_data = json.loads(vote_str)
-                rankings = vote_data.get('rankings', [])
-                self.processed_votes.append(rankings)
-            except json.JSONDecodeError:
-                print(f"Invalid vote data: {vote_str}")
+        for vote_dict in self.vote_data:
+            rankings = vote_dict.get('rankings', [])
+            self.processed_votes.append(rankings)
+
 
         # Count first-choice votes
         for vote in self.processed_votes:

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from algorithms.firstPastThePost import FPTPVoteProcessor
+from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election, ElectionResults
 from voting.models import Ballot, Candidate, Voter, Vote
@@ -83,6 +84,9 @@ def manage_election(request, election_id):
                     processor = FPTPVoteProcessor(candidates_dict, vote_list)
                     result.results_data = processor.result
 
+                elif ballot.voting_type == "RCV":
+                    processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
+                    result.results_data = processor.finalize_results()
 
                 # save results
                 result.save()
