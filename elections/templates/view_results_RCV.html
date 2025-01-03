@@ -1,0 +1,35 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+<h1>Results for {{ ballot_title }}</h1>
+
+<h2>Quota: {{ quota }}</h2>
+
+<h3>Winners: {{ winners|join:", " }}</h3>
+
+{% for round in rounds %}
+    <h3>Round {{ round.round_number }}</h3>
+    <p>Elected: {{ round.elected|join:", " }}</p>
+    <p>Eliminated: {{ round.eliminated|join:", " }}</p>
+    <p>Surplus: {{ round.surplus }}</p>
+    <h4>Initial Votes</h4>
+    <ul>
+        {% for candidate, votes in round.initial_votes.items %}
+            <li>{{ candidate }}: {{ votes }}</li>
+        {% endfor %}
+    </ul>
+    <h4>Final Votes</h4>
+    <ul>
+        {% for candidate, votes in round.final_votes.items %}
+            <li>{{ candidate }}: {{ votes }}</li>
+        {% endfor %}
+    </ul>
+    <h4>Transfers</h4>
+    <ul>
+        {% for candidate, votes in round.transfers.items %}
+            <li>{{ candidate }}: {{ votes }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+{% endblock %}
