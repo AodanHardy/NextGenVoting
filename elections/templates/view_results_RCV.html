@@ -11,7 +11,7 @@
     {% for round in rounds %}
         <div class="round-section">
             <h3>Round {{ round.round_number }}</h3>
-            <p>Elected: {{ round.elected|join:", " }}</p>
+            <p>Elected: {{ round.elected }}</p>
             <p>Eliminated: {{ round.eliminated|join:", " }}</p>
             <p>Surplus: {{ round.surplus }}</p>
 

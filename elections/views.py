@@ -160,9 +160,9 @@ def view_fpp_results(request, ballot_id):
         for round_data in rounds:
             processed_round = {
                 "round_number": round_data["round_number"],
-                "elected": round_data.get("elected", []),  # Default to an empty list if not present
-                "surplus": round_data.get("surplus", 0),  # Default to 0 if not present
-                "eliminated": round_data.get("eliminated", []),  # Handle eliminated candidates
+                "elected": round_data.get("elected", []),
+                "surplus": round_data.get("surplus", 0),
+                "eliminated": round_data.get("eliminated", []),
                 "initial_votes": {
                     candidates[cid]["name"]: votes
                     for cid, votes in round_data["initial_votes"].items()
@@ -186,12 +186,6 @@ def view_fpp_results(request, ballot_id):
             "winners": winners,
         }
         return render(request, "view_results_RCV.html", context)
-
-
-
-
-
-
 
 
 '''' The rest of the views are for the forms for creating an election '''
