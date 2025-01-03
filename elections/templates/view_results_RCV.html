@@ -7,29 +7,51 @@
 
 <h3>Winners: {{ winners|join:", " }}</h3>
 
-{% for round in rounds %}
-    <h3>Round {{ round.round_number }}</h3>
-    <p>Elected: {{ round.elected|join:", " }}</p>
-    <p>Eliminated: {{ round.eliminated|join:", " }}</p>
-    <p>Surplus: {{ round.surplus }}</p>
-    <h4>Initial Votes</h4>
-    <ul>
-        {% for candidate, votes in round.initial_votes.items %}
-            <li>{{ candidate }}: {{ votes }}</li>
-        {% endfor %}
-    </ul>
-    <h4>Final Votes</h4>
-    <ul>
-        {% for candidate, votes in round.final_votes.items %}
-            <li>{{ candidate }}: {{ votes }}</li>
-        {% endfor %}
-    </ul>
-    <h4>Transfers</h4>
-    <ul>
-        {% for candidate, votes in round.transfers.items %}
-            <li>{{ candidate }}: {{ votes }}</li>
-        {% endfor %}
-    </ul>
-{% endfor %}
+<div id="rounds-container">
+    {% for round in rounds %}
+        <div class="round-section">
+            <h3>Round {{ round.round_number }}</h3>
+            <p>Elected: {{ round.elected|join:", " }}</p>
+            <p>Eliminated: {{ round.eliminated|join:", " }}</p>
+            <p>Surplus: {{ round.surplus }}</p>
 
+            <canvas id="initialVotesChart{{ round.round_number }}"></canvas>
+        </div>
+    {% endfor %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const roundsData = {{ rounds|safe }};
+
+    roundsData.forEach(round => {
+        // Prepare data for Initial Votes Chart
+        const initialVotesLabels = Object.keys(round.initial_votes);
+        const initialVotesData = Object.values(round.initial_votes);
+
+        const initialVotesCtx = document.getElementById(`initialVotesChart${round.round_number}`).getContext('2d');
+        new Chart(initialVotesCtx, {
+            type: 'bar',
+            data: {
+                labels: initialVotesLabels,
+                datasets: [{
+                    label: 'Initial Votes',
+                    data: initialVotesData,
+                    backgroundColor: 'rgb(75,130,192)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+
+    });
+</script>
 {% endblock %}

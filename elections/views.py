@@ -139,7 +139,6 @@ def view_fpp_results(request, ballot_id):
 
 
     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
-        # Prepare data for graph
         labels = [candidates[candidate_id] for candidate_id in results_data.keys()]
         values = list(results_data.values())
 
@@ -148,73 +147,44 @@ def view_fpp_results(request, ballot_id):
             'labels': labels,
             'values': values,
         }
-
         return render(request, 'view_results_FPP.html', context)
 
 
     elif ballot.voting_type == "RCV":
-
         rounds = results_data.get("rounds", [])
-
         candidates = results_data.get("candidates", {})
-
         quota = results_data.get("quota")
-
         winners = results_data.get("winners", [])
-
         processed_rounds = []
 
         for round_data in rounds:
             processed_round = {
-
                 "round_number": round_data["round_number"],
-
                 "elected": round_data.get("elected", []),  # Default to an empty list if not present
-
                 "surplus": round_data.get("surplus", 0),  # Default to 0 if not present
-
                 "eliminated": round_data.get("eliminated", []),  # Handle eliminated candidates
-
                 "initial_votes": {
-
                     candidates[cid]["name"]: votes
-
                     for cid, votes in round_data["initial_votes"].items()
-
                 },
-
                 "final_votes": {
-
                     candidates[cid]["name"]: votes
-
                     for cid, votes in round_data["final_votes"].items()
-
                 },
 
                 "transfers": {
-
                     candidates[cid]["name"]: votes
-
                     for cid, votes in round_data["transfers"].items()
-
                 },
-
             }
-
             processed_rounds.append(processed_round)
 
         context = {
-
             "ballot_title": ballot.title,
-
             "quota": quota,
-
             "rounds": processed_rounds,
-
             "winners": winners,
-
         }
-
         return render(request, "view_results_RCV.html", context)
 
 
