@@ -130,6 +130,33 @@ def manage_election(request, election_id):
                                                     'ballot_results': ballot_results})
 
 
+@login_required
+def view_fpp_results(request, ballot_id):
+    ballot = get_object_or_404(Ballot, id=ballot_id, election__user=request.user)
+    results = ballot.results.first()
+    results_data = results.results_data
+    candidates = {str(c.id): c.title for c in ballot.candidates.all()}
+
+    # Prepare data for graph
+    labels = [candidates[candidate_id] for candidate_id in results_data.keys()]
+    values = list(results_data.values())
+
+    context = {
+        'ballot_title': ballot.title,
+        'labels': labels,
+        'values': values,
+    }
+
+    return render(request, 'view_results_FPP.html', context)
+
+
+
+
+
+
+
+
+
 '''' The rest of the views are for the forms for creating an election '''
 
 

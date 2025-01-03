@@ -1,0 +1,33 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+    <h1>Results for {{ ballot_title }}</h1>
+
+    <div>
+        <h2>{{ ballot_title }}</h2>
+        <canvas id="chart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('chart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: 'Votes',
+                    data: {{ values|safe }},
+                    backgroundColor: 'rgb(75,130,192)',
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+{% endblock %}
