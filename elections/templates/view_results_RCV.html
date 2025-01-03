@@ -16,16 +16,24 @@
             <p>Surplus: {{ round.surplus }}</p>
 
             <canvas id="initialVotesChart{{ round.round_number }}"></canvas>
+
+            <!-- Transfers Section -->
+            <h4>Transfers:</h4>
+            <ul>
+                {% for candidate, votes in round.transfers.items %}
+                    <li>{{ candidate }}: {{ votes }} votes</li>
+                {% endfor %}
+            </ul>
         </div>
     {% endfor %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    const quota = {{ quota }};
     const roundsData = {{ rounds|safe }};
 
     roundsData.forEach(round => {
-        // Prepare data for Initial Votes Chart
+        // get data for chart
         const initialVotesLabels = Object.keys(round.initial_votes);
         const initialVotesData = Object.values(round.initial_votes);
 
@@ -42,6 +50,27 @@
                 }]
             },
             options: {
+                // this adds quota line to graph
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            quotaLine: {
+                                type: 'line',
+                                mode: 'horizontal',
+                                scaleID: 'y',
+                                value: quota,
+                                borderColor: 'rgb(121,218,17)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Quota',
+                                    enabled: true,
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true
@@ -49,9 +78,6 @@
                 }
             }
         });
-
-
-
     });
 </script>
 {% endblock %}
