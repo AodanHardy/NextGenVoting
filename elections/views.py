@@ -1,5 +1,3 @@
-import json
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
@@ -15,7 +13,6 @@ from .forms import VoterUploadForm
 from .utils import VoterData, getWinningVote
 from .utils import ElectionData, BallotData
 
-
 # Create your views here.
 
 @login_required
@@ -24,6 +21,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'elections': user_elections})
 
 
+# page for viewing individual election
 @login_required
 def manage_election(request, election_id):
     election = get_object_or_404(Election, id=election_id, user=request.user)
@@ -31,6 +29,7 @@ def manage_election(request, election_id):
 
 
     if request.method == 'POST':
+        # check if user started or ended election
         action = request.POST.get('action')
 
         if action == 'start':
@@ -40,6 +39,7 @@ def manage_election(request, election_id):
 
             # trigger to send out emails here
 
+        # if they ended election, update db and trigger counting process
         elif action == 'end':
             election.end_time = timezone.now()
             election.status = 'completed'
@@ -80,10 +80,12 @@ def manage_election(request, election_id):
                 result.election = election
                 result.ballot = ballot
 
+                # call FPP algorithm for FPP or YN votes
                 if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                     processor = FPTPVoteProcessor(candidates_dict, vote_list)
                     result.results_data = processor.result
 
+                # ranked choice
                 elif ballot.voting_type == "RCV":
                     processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
                     result.results_data = processor.finalize_results()
@@ -92,10 +94,6 @@ def manage_election(request, election_id):
                 result.save()
                 election.results_published = True
                 election.save()
-
-                print()
-
-
 
         return redirect('manage_election', election_id=election.id)
 
@@ -129,15 +127,14 @@ def manage_election(request, election_id):
                                                     'voters_count': voterCount,
                                                     'ballot_results': ballot_results})
 
-
 @login_required
-def view_fpp_results(request, ballot_id):
+def view_fpp_results(request, ballot_id):  # view results function
     ballot = get_object_or_404(Ballot, id=ballot_id, election__user=request.user)
     results = ballot.results.first()
     results_data = results.results_data
     candidates = {str(c.id): c.title for c in ballot.candidates.all()}
 
-
+    # if its FPP, send to FPP html template
     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
         labels = [candidates[candidate_id] for candidate_id in results_data.keys()]
         values = list(results_data.values())
@@ -149,7 +146,7 @@ def view_fpp_results(request, ballot_id):
         }
         return render(request, 'view_results_FPP.html', context)
 
-
+    # if its RCV, send to RCV html template but breakdown data first
     elif ballot.voting_type == "RCV":
         rounds = results_data.get("rounds", [])
         candidates = results_data.get("candidates", {})
@@ -196,6 +193,7 @@ def view_fpp_results(request, ballot_id):
 # Description
 # number of ballots
 # if it uses blockchain
+@login_required
 def election_details(request):
     # need to Clear data from previous session
 

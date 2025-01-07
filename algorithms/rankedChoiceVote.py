@@ -11,7 +11,7 @@ mock_votes = [
     '{"rankings": [4, 1]}',
     '{"rankings": [3, 4]}',
     '{"rankings": [1, 4, 2, 3]}',
-    '{"rankings": [2, 3, 1, 4]}',
+    '{"rankings": [3, 1, 4]}',
     '{"rankings": [4, 3, 2, 1]}',
     '{"rankings": [1, 3]}',
     '{"rankings": [2, 4, 3]}',

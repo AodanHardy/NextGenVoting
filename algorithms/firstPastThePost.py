@@ -27,17 +27,6 @@ class FPTPVoteProcessor:
         self.processVotes()
 
     def processVotes(self):
-        '''
-        for vote_str in self.voteData:
-            try:
-                vote_data = json.loads(vote_str)
-                vote = vote_data.get('id')
-                if vote in self.result:
-                    self.result[vote] += 1
-
-            except json.JSONDecodeError:
-                print(f"Invalid vote data: {vote_str}")
-        '''
 
         for voteDict in self.voteData:
             vote = voteDict.get("id")
