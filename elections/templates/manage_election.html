@@ -60,10 +60,11 @@
                                 <li class="candidate-item">{{ winner }}</li>
                             {% endfor %}
                         </ul>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'view_fpp_results' ballot.ballot.id %}" class="btn btn-secondary">View Full Results</a>
+                    </div>
                 {% endif %}
-            <div class="text-center mt-4">
-                <a href="{% url 'view_fpp_results' ballot.ballot.id %}" class="btn btn-secondary">View Full Results</a>
-            </div>
+
             </li>
         {% endfor %}
     </ul>
