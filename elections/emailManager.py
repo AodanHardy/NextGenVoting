@@ -1,8 +1,10 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+
+from celery import shared_task
+
 from voting.models import Voter
-import uuid
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -11,10 +13,17 @@ EMAIL_HOST_USER = 'nextgenvoting1@gmail.com'
 EMAIL_HOST_PASSWORD = 'ravw sviy arot ktlh'
 
 
+@shared_task
+def sendAllEmails_async(electionId):
+    emailManager = EmailManager(electionId)
+    emailManager.send_emails_to_all_voters()
+
+
 class EmailManager:
     """
     sends emails to all voters of an election.
     """
+
     def __init__(self, election_id):
         self.election_id = election_id
         self.email_user = EMAIL_HOST_USER
@@ -66,4 +75,3 @@ class EmailManager:
                 print(f"Email sent to {voter.name} ({voter.email})")
             else:
                 print(f"Failed to send email to {voter.name} ({voter.email})")
-

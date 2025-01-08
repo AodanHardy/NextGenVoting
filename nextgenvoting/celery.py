@@ -3,9 +3,9 @@ import os
 from celery import Celery
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nextGenVoting.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nextgenvoting.settings')
 
-app = Celery('nextGenVoting')
+app = Celery('nextgenvoting')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
