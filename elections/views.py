@@ -3,6 +3,7 @@ from django.utils import timezone
 
 from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
+from .emailManager import EmailManager
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election, ElectionResults
 from voting.models import Ballot, Candidate, Voter, Vote
@@ -38,6 +39,8 @@ def manage_election(request, election_id):
             election.save()
 
             # trigger to send out emails here
+            emailManager = EmailManager(election_id)
+            emailManager.send_emails_to_all_voters()
 
         # if they ended election, update db and trigger counting process
         elif action == 'end':
