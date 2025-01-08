@@ -19,3 +19,5 @@ celerybeat-schedule
 
 # Other unnecessary files
 .DS_Store
+
+*.rdb

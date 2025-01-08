@@ -1,9 +1,11 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from django.template.loader import render_to_string
 
 from celery import shared_task
 
+from elections.models import Election
 from voting.models import Voter
 
 EMAIL_USE_TLS = True
@@ -25,7 +27,7 @@ class EmailManager:
     """
 
     def __init__(self, election_id):
-        self.election_id = election_id
+        self.election = Election.objects.get(id=election_id)
         self.email_user = EMAIL_HOST_USER
         self.email_password = EMAIL_HOST_PASSWORD
         self.EMAIL_HOST = EMAIL_HOST
@@ -33,20 +35,26 @@ class EmailManager:
 
     def get_voters(self):
         try:
-            return Voter.objects.filter(election_id=self.election_id)
+            return Voter.objects.filter(election_id=self.election.id)
         except Exception as e:
             print(f"Error retrieving voters: {e}")
             return []
 
-    def send_email(self, email, name):
-        subject = "Hello"
-        body = f"Hello {name}!"
+    def send_email(self, voter):
+
+        # make the link here
+        unique_link = f"http://localhost:8000/vote/{voter.id}/"
+
+        subject = f"Vote now in {self.election.title}"
+
+        context = {'name': voter.name, 'election_name': self.election.title, 'link': unique_link}
+        body = render_to_string('email_template.html', context=context)
 
         msg = MIMEMultipart()
         msg['From'] = self.email_user
-        msg['To'] = email
+        msg['To'] = voter.email
         msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        msg.attach(MIMEText(body, 'html'))
 
         try:
             # Connect to the server
@@ -55,10 +63,10 @@ class EmailManager:
             server.login(self.email_user, self.email_password)
 
             # Send the email
-            server.sendmail(self.email_user, email, msg.as_string())
+            server.sendmail(self.email_user, voter.email, msg.as_string())
             return True
         except Exception as e:
-            print(f"Failed to send email to {email}: {e}")
+            print(f"Failed to send email to {voter.email}: {e}")
             return False
         finally:
             server.quit()
@@ -70,7 +78,7 @@ class EmailManager:
             return
 
         for voter in voters:
-            success = self.send_email(voter.email, voter.name)
+            success = self.send_email(voter)
             if success:
                 print(f"Email sent to {voter.name} ({voter.email})")
             else:
