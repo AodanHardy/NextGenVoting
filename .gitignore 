@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environments
+venv/
+env/
+
+# IDE files
+.idea/
+*.vscode/
+
+# Celery
+celerybeat-schedule
+
+# Logs
+*.log
+
+# Other unnecessary files
+.DS_Store
