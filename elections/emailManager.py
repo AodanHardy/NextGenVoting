@@ -74,7 +74,7 @@ class EmailManager:
     def send_emails_to_all_voters(self):
         voters = self.get_voters()
         if not voters:
-            print("No voters found for the given election ID.")
+            print("No voters found")
             return
 
         for voter in voters:
