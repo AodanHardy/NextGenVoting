@@ -13,7 +13,7 @@ class BlockchainManager:
         self.web3 = Web3(Web3.HTTPProvider(rpc_url))
 
         # get abi from json file
-        with open('abi.json') as f:
+        with open('algorithms/abi.json') as f:
             self.contract_abi = json.load(f)
 
         self.contract_address = settings.CONTRACT_ADDRESS
@@ -30,12 +30,12 @@ class BlockchainManager:
             print("")
             return None
 
-    def sendVote(self, voter_id, vote_value):
+    def sendVote(self, voter_id, vote_data):
         try:
             # the transaction
             transaction = self.contract.functions.storeVote(
                 str(voter_id),
-                str(vote_value)
+                str(vote_data)
             ).build_transaction({
                 'from': self.account.address,
                 'nonce': self.web3.eth.get_transaction_count(self.account.address),
