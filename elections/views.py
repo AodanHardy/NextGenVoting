@@ -52,7 +52,7 @@ def manage_election(request, election_id):
 
             # *** if the election USES blockchain
 
-            if election.blockchain_vote:
+            if election.use_blockchain:
                 bm = BlockchainManager()
 
                 blockchainVotes = Blockchain_Vote.objects.filter(election=election)
@@ -100,7 +100,7 @@ def manage_election(request, election_id):
 
 
             # *** if the election doesn't use blockchain
-            if not election.blockchain_vote:
+            if not election.use_blockchain:
                 # get all ballots form this election
                 ballots = Ballot.objects.filter(election=election_id)
 

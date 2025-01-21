@@ -52,7 +52,6 @@ class BlockchainManager:
             # wait for the transaction to finish
             tx_receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
 
-            print(f"Transaction successful: {tx_receipt.transactionHash.hex()}")
             return tx_receipt
 
         except Exception as e:
