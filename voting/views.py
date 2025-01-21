@@ -217,6 +217,12 @@ def vote_summary(request, vote_id):
 
             bc_manager.sendVote(bc_vote.id, str(blockchainArray))
 
+            '''
+            maybe here i could double-check that the vote has counted using getVote()
+            if not then add the vote to a cache db table which celery will pick up and tell the user their vote will 
+            count
+            '''
+
 
 
         # if it doesn't use blockchain
