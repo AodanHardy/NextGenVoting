@@ -1,3 +1,19 @@
+import ast
+from collections import defaultdict
+
+
+def organise_votes_by_ballot(votes):
+    ballot_votes = defaultdict(list)
+
+    for vote in votes:
+        # Safely evaluate the string to convert it into a Python list of dictionaries
+        parsed_vote = ast.literal_eval(vote)
+        for ballot in parsed_vote:
+            for ballot_id, ballot_data in ballot.items():
+                ballot_votes[int(ballot_id)].append(ballot_data)
+
+    return dict(ballot_votes)
+
 
 
 

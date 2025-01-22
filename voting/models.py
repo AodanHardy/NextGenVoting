@@ -52,3 +52,8 @@ class Vote(models.Model):
     blockchain_transaction_id = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+class Blockchain_Vote(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='blockchain_vote')
+    created_at = models.DateTimeField(auto_now_add=True)

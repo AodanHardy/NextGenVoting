@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from algorithms.blockchain import BlockchainManager
 from elections.models import Election
-from voting.models import Ballot, Voter, Candidate, Vote
+from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
 from voting.utils import get_ranked_order
 
 
@@ -165,45 +166,108 @@ def vote_summary(request, vote_id):
             candidateNames.append(candidateObj.title)
         ballot['candidateNames'] = candidateNames
 
-    print()
+    # if
     if request.method == 'POST':
-        for ballot in ballots:
+        electionObj = Election.objects.get(id=voter_data.get("election_id"))
+        usesBlockchain = electionObj.use_blockchain
 
-            # getting data in correct json format
-            ballotVoteDict = ""
+        # if it uses blockchain
+        if usesBlockchain:
+            blockchainArray = []
+            for ballot in ballots:
 
-            # FPP format : {"id": 1}
-            if ballot.get('voting_type') == 'FPP':
-                voteData = ballot.get('voteData')
-                voteData = voteData[0][0]
-                ballotVoteDict = {"id": int(voteData)}
+                # getting data in correct json format
+                ballotVoteDict = ""
 
-            # RCV format: {"rankings": [3, 2, 1]}
-            elif ballot.get('voting_type') == 'RCV':
-                voteData = ballot.get('voteData')
-                voteData = voteData[0]
-                ballotVoteDict = {"rankings": voteData}
+                # FPP format : {"id": 1}
+                if ballot.get('voting_type') == 'FPP':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0][0]
+                    ballotVoteDict = {"id": int(voteData)}
 
-            # YN format : {"id": "281"}
-            elif ballot.get('voting_type') == 'YN':
-                voteData = ballot.get('voteData')
-                voteData = voteData[0][0]
-                ballotVoteDict = {"id": int(voteData)}
+                # RCV format: {"rankings": [3, 2, 1]}
+                elif ballot.get('voting_type') == 'RCV':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0]
+                    ballotVoteDict = {"rankings": voteData}
 
-            # get ballot
-            ballotId = ballot.get('id')
-            ballotobj = Ballot.objects.get(id=ballotId)
+                # YN format : {"id": "281"}
+                elif ballot.get('voting_type') == 'YN':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0][0]
+                    ballotVoteDict = {"id": int(voteData)}
 
+                # get ballot
+                ballotId = ballot.get('id')
+                ballotobj = Ballot.objects.get(id=ballotId)
+
+                # save the ballot id and add to array
+                blockchainArray.append({ballotId: ballotVoteDict})
+
+
+            # after ballots
+
+            # creating blockchain vote obj
+
+            bc_vote = Blockchain_Vote(election=electionObj)
+            bc_vote.save()
+
+            # with that send to blockchain
+            bc_manager = BlockchainManager()
+
+            receipt = bc_manager.sendVote(bc_vote.id, str(blockchainArray))
             '''
-             At this point, the the ballot data is set and we need to save the vote data to the database
-             
-             take ballot id, create a new vote object with ballot id and vote data
+            maybe here i could double-check that the vote has counted using getVote()
+            if not then add the vote to a cache db table which celery will pick up and tell the user their vote will 
+            count
+            
+            also need to handle a time out, and what to do if it happens - also add to cache 
             '''
-            # creating votes
-            Vote.objects.create(
-                ballot=ballotobj,
-                vote_data=ballotVoteDict
-            )
+
+
+
+        # if it doesn't use blockchain
+        elif not usesBlockchain:
+            for ballot in ballots:
+
+                # getting data in correct json format
+                ballotVoteDict = ""
+
+                # FPP format : {"id": 1}
+                if ballot.get('voting_type') == 'FPP':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0][0]
+                    ballotVoteDict = {"id": int(voteData)}
+
+                # RCV format: {"rankings": [3, 2, 1]}
+                elif ballot.get('voting_type') == 'RCV':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0]
+                    ballotVoteDict = {"rankings": voteData}
+
+                # YN format : {"id": "281"}
+                elif ballot.get('voting_type') == 'YN':
+                    voteData = ballot.get('voteData')
+                    voteData = voteData[0][0]
+                    ballotVoteDict = {"id": int(voteData)}
+
+                # get ballot
+                ballotId = ballot.get('id')
+                ballotobj = Ballot.objects.get(id=ballotId)
+
+                '''
+                 At this point, the the ballot data is set and we need to save the vote data to the database
+                 
+                 take ballot id, create a new vote object with ballot id and vote data
+                '''
+                # creating votes
+                Vote.objects.create(
+                    ballot=ballotobj,
+                    vote_data=ballotVoteDict
+                )
+
+
+
 
         '''
         after all ballots have been uploaded, i need to update the voted column of the voter table
@@ -216,7 +280,7 @@ def vote_summary(request, vote_id):
           And then increment the votes cast column of the election table
         '''
 
-        electionObj = Election.objects.get(id=voter_data.get("election_id"))
+
         electionObj.votes_cast += 1
         electionObj.save()
 

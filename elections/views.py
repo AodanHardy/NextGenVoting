@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
+from algorithms.blockchain import BlockchainManager
 from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from .emailManager import EmailManager, sendAllEmails_async
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election, ElectionResults
-from voting.models import Ballot, Candidate, Voter, Vote
+from voting.models import Ballot, Candidate, Voter, Vote, Blockchain_Vote
 from django.contrib.auth.decorators import login_required
 
 import csv
 from .forms import VoterUploadForm
-from .utils import VoterData, getWinningVote
+from .utils import VoterData, getWinningVote, organise_votes_by_ballot
 from .utils import ElectionData, BallotData
 
 # Create your views here.
@@ -41,7 +42,7 @@ def manage_election(request, election_id):
             # trigger to send out emails here
             sendAllEmails_async.delay(election_id)
 
-        # if they ended election, update db and trigger counting process
+        # if ended election, update db and trigger counting process
         elif action == 'end':
             election.end_time = timezone.now()
             election.status = 'completed'
@@ -49,53 +50,107 @@ def manage_election(request, election_id):
 
             # trigger to start counting process
 
-            # get all ballots form this election
-            ballots = Ballot.objects.filter(election=election_id)
+            # *** if the election USES blockchain
 
-            # for loop for each ballot in election
-            for ballot in ballots:
+            if election.use_blockchain:
+                bm = BlockchainManager()
 
-                # fetch votes
-                votes = Vote.objects.filter(ballot=ballot)
+                blockchainVotes = Blockchain_Vote.objects.filter(election=election)
+                votes = []
 
-                # prep data
-                vote_list = []
-                for vote in votes:
-                    vote_list.append(vote.vote_data)
+                for vote in blockchainVotes:
 
-                candidates_list = Candidate.objects.filter(ballot=ballot)
-                candidates_dict = {}
-                for candidate in candidates_list:
-                    candidates_dict[candidate.id] = candidate.title
+                    votes.append(bm.getVote(vote.id))
 
-                '''
-                    at this point i have all the votes and candidtes
-                    
-                    i now need to update the algorithms to take this data and return results
-                    
-                    then check each voting type and pass it too the algorithms 
-                '''
 
-                # call counting algorithm
+                # send to somthing that will organise the votes
+                organisedVotesByBallots = organise_votes_by_ballot(votes)
 
-                result = ElectionResults()
-                result.election = election
-                result.ballot = ballot
+                for ballotId, vote_list in organisedVotesByBallots.items():
 
-                # call FPP algorithm for FPP or YN votes
-                if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
-                    processor = FPTPVoteProcessor(candidates_dict, vote_list)
-                    result.results_data = processor.result
+                    candidates_list = Candidate.objects.filter(ballot=ballotId)
+                    candidates_dict = {}
+                    for candidate in candidates_list:
+                        candidates_dict[candidate.id] = candidate.title
 
-                # ranked choice
-                elif ballot.voting_type == "RCV":
-                    processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
-                    result.results_data = processor.finalize_results()
+                    ballot = Ballot.objects.get(id=ballotId)
 
-                # save results
-                result.save()
-                election.results_published = True
-                election.save()
+                    result = ElectionResults()
+                    result.election = election
+                    result.ballot = ballot
+
+                    # call FPP algorithm for FPP or YN votes
+                    if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
+                        processor = FPTPVoteProcessor(candidates_dict, vote_list)
+                        result.results_data = processor.result
+
+                    # ranked choice
+                    elif ballot.voting_type == "RCV":
+                        processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
+                        result.results_data = processor.finalize_results()
+
+                    # save results
+                    result.save()
+                    election.results_published = True
+                    election.save()
+
+
+
+
+
+
+            # *** if the election doesn't use blockchain
+            if not election.use_blockchain:
+                # get all ballots form this election
+                ballots = Ballot.objects.filter(election=election_id)
+
+                # for loop for each ballot in election
+                for ballot in ballots:
+
+                    # fetch votes
+                    votes = Vote.objects.filter(ballot=ballot)
+
+                    # prep data
+                    vote_list = []
+                    for vote in votes:
+                        vote_list.append(vote.vote_data)
+
+                    candidates_list = Candidate.objects.filter(ballot=ballot)
+                    candidates_dict = {}
+                    for candidate in candidates_list:
+                        candidates_dict[candidate.id] = candidate.title
+
+
+
+
+                    '''
+                        at this point i have all the votes and candidates
+                        
+                        i now need to update the algorithms to take this data and return results
+                        
+                        then check each voting type and pass it too the algorithms 
+                    '''
+
+                    # call counting algorithm
+
+                    result = ElectionResults()
+                    result.election = election
+                    result.ballot = ballot
+
+                    # call FPP algorithm for FPP or YN votes
+                    if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
+                        processor = FPTPVoteProcessor(candidates_dict, vote_list)
+                        result.results_data = processor.result
+
+                    # ranked choice
+                    elif ballot.voting_type == "RCV":
+                        processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
+                        result.results_data = processor.finalize_results()
+
+                    # save results
+                    result.save()
+                    election.results_published = True
+                    election.save()
 
         return redirect('manage_election', election_id=election.id)
 
