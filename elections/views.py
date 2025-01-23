@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
-from algorithms.blockchain import BlockchainManager
 from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
+from voting.blockchain import BlockchainManager
 from .emailManager import EmailManager, sendAllEmails_async
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
 from .models import Election, ElectionResults

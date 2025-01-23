@@ -2,8 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from algorithms.blockchain import BlockchainManager
+
 from elections.models import Election
+from voting.blockchain import BlockchainManager
 from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
 from voting.utils import get_ranked_order
 

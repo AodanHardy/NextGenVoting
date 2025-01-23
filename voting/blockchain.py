@@ -2,9 +2,18 @@ import json
 from web3 import Web3
 from eth_account import Account
 from nextgenvoting import settings
+from celery import shared_task
 
 # need to send this to constant somewhere
 rpc_url = "https://polygon-rpc.com"
+
+
+@shared_task
+def castBallot(rowid, voteData):
+    print("In shared task***")
+    bc_manager = BlockchainManager()
+    bc_manager.sendVote(rowid, str(voteData))
+
 
 
 class BlockchainManager:
