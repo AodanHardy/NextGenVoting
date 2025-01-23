@@ -2,9 +2,37 @@ import json
 from web3 import Web3
 from eth_account import Account
 from nextgenvoting import settings
+from celery import shared_task
 
 # need to send this to constant somewhere
 rpc_url = "https://polygon-rpc.com"
+
+
+@shared_task(bind=True, max_retries=3, default_retry_delay=120)
+def cast_vote_async(self, vote_id, vote_data):
+    try:
+        # initialize BlockchainManager
+        bc_manager = BlockchainManager()
+
+        # send the vote to the blockchain
+        tx_receipt = bc_manager.sendVote(vote_id, vote_data)
+
+        # sog and return the result
+        if tx_receipt:
+            print(f"Transaction successful for vote_id {vote_id}: {tx_receipt}")
+            return {"status": "success", "transaction_receipt": tx_receipt}
+        else:
+            print(f"Transaction failed for vote_id {vote_id}")
+            return {"status": "failed", "error": "Transaction failed"}
+
+    except Exception as e:
+        print(f"An error occurred while processing vote_id {vote_id}: {e}")
+
+        # Retry the task in case of failure
+        raise self.retry(exc=e)
+
+
+
 
 
 class BlockchainManager:
