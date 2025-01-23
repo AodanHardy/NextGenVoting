@@ -490,4 +490,6 @@ def review_election(request):
     return render(request, 'review_election.html', {'election_data': election_data})
 
 
-
+def edit_ballot(request, ballot_id):
+    ballot = Ballot.objects.get(id=ballot_id)
+    return render(request, 'edit_ballot.html', {'ballot': ballot})

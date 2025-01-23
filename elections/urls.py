@@ -11,6 +11,7 @@ urlpatterns = [
     path('add/review_election',  views.review_election, name='review_election'),
     path('elections/<int:election_id>/', views.manage_election, name='manage_election'),
     path('<int:ballot_id>/results/', views.view_fpp_results, name='view_fpp_results'),
+    path('<int:ballot_id>/edit/', views.edit_ballot, name='edit_ballot'),
 ]
 
 

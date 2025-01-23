@@ -64,7 +64,11 @@
                         <a href="{% url 'view_fpp_results' ballot.ballot.id %}" class="btn btn-secondary">View Full Results</a>
                     </div>
                 {% endif %}
-
+                {% if election.status == 'pending' %}
+                     <div class="text-center mt-3">
+                        <a href="{% url 'edit_ballot' ballot.ballot.id %}" class="btn btn-secondary btn-sm">Edit Ballot</a>
+                    </div>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
