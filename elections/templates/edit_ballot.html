@@ -1,0 +1,37 @@
+{% extends "userbase.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Ballot: {{ ballot.title }}</h2>
+    <form method="POST" novalidate>
+        {% csrf_token %}
+
+        <h4>Ballot Details</h4>
+        <div class="form-group">
+            {{ ballot_form.ballot_title.label_tag }}
+            {{ ballot_form.ballot_title }}
+            {{ ballot_form.ballot_title.errors }}
+        </div>
+        <div class="form-group">
+            {{ ballot_form.voting_type.label_tag }}
+            {{ ballot_form.voting_type }}
+            {{ ballot_form.voting_type.errors }}
+        </div>
+
+        <h4>Candidates</h4>
+        <div class="form-group">
+            {{ candidates_form.number_of_winners.label_tag }}
+            {{ candidates_form.number_of_winners }}
+            {{ candidates_form.number_of_winners.errors }}
+        </div>
+        <div class="form-group">
+            {{ candidates_form.candidates.label_tag }}
+            {{ candidates_form.candidates }}
+            {{ candidates_form.candidates.errors }}
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </form>
+    <a href="{% url 'manage_election' ballot.election.id %}" class="btn btn-secondary mt-3">Cancel</a>
+</div>
+{% endblock %}

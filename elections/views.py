@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
@@ -490,6 +491,59 @@ def review_election(request):
     return render(request, 'review_election.html', {'election_data': election_data})
 
 
+
 def edit_ballot(request, ballot_id):
-    ballot = Ballot.objects.get(id=ballot_id)
-    return render(request, 'edit_ballot.html', {'ballot': ballot})
+    ballot = get_object_or_404(Ballot, id=ballot_id)
+
+    VOTING_TYPE_MAPPING = {
+        'first_past_the_post': 'FPP',
+        'ranked_choice': 'RCV',
+        'yes_no': 'YN'
+    }
+
+    if request.method == 'POST':
+        ballot_form = BallotForm(request.POST)
+        candidates_form = CandidatesForm(request.POST)
+
+        if ballot_form.is_valid() and candidates_form.is_valid():
+            # Update Ballot details
+            ballot.title = ballot_form.cleaned_data['ballot_title']
+            ballot.voting_type = VOTING_TYPE_MAPPING.get(ballot_form.cleaned_data['voting_type'])
+            ballot.number_of_winners = candidates_form.cleaned_data.get('number_of_winners', 1)
+
+            # Update Candidates
+
+            # delete existing candidates
+            existingCandidates = Candidate.objects.filter(ballot_id=ballot_id)
+            existingCandidates.delete()
+
+            newCandidates = candidates_form.cleaned_data['candidates'].split(',')
+            for candidate_name in newCandidates:
+                Candidate.objects.create(
+                    ballot=ballot,
+                    title=candidate_name
+                )
+
+
+            ballot.save()
+
+            messages.success(request, "Ballot updated successfully!")
+            return redirect('manage_election', ballot.election.id)
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        # pre-populate the forms with existing data
+        ballot_form = BallotForm(initial={
+            'ballot_title': ballot.title,
+            'voting_type': ballot.voting_type
+        })
+        candidates_form = CandidatesForm(initial={
+            'number_of_winners': ballot.number_of_winners,
+            'candidates': ', '.join([c.title for c in ballot.candidates.all()])  # Replace with your candidate logic
+        })
+
+    return render(request, 'edit_ballot.html', {
+        'ballot': ballot,
+        'ballot_form': ballot_form,
+        'candidates_form': candidates_form
+    })
