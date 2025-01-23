@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 from elections.models import Election
-from voting.blockchain import BlockchainManager
+from voting.blockchain import BlockchainManager, cast_vote_async
 from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
 from voting.utils import get_ranked_order
 
@@ -211,12 +211,14 @@ def vote_summary(request, vote_id):
             # creating blockchain vote obj
 
             bc_vote = Blockchain_Vote(election=electionObj)
+
+            # maybe pass this into async and save it once complete
+            # (also maybe add completed boolean to table and set it to true when done)
             bc_vote.save()
 
-            # with that send to blockchain
-            bc_manager = BlockchainManager()
+            cast_vote_async(bc_vote.id, str(blockchainArray))
 
-            receipt = bc_manager.sendVote(bc_vote.id, str(blockchainArray))
+
             '''
             maybe here i could double-check that the vote has counted using getVote()
             if not then add the vote to a cache db table which celery will pick up and tell the user their vote will 
