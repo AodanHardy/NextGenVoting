@@ -1,35 +1,44 @@
 import json
 from web3 import Web3
 from eth_account import Account
+
+from elections.models import Election
 from nextgenvoting import settings
 from celery import shared_task
+
+from voting.models import Blockchain_Vote
 
 # need to send this to constant somewhere
 rpc_url = "https://polygon-rpc.com"
 
 
-@shared_task(bind=True, max_retries=3, default_retry_delay=120)
-def cast_vote_async(self, vote_id, vote_data):
+#@shared_task(bind=True, max_retries=3, default_retry_delay=30)
+@shared_task
+def cast_vote_async(bc_voteId, vote_data):
+
+    bc_vote = Blockchain_Vote.objects.get(id=bc_voteId)
+
     try:
         # initialize BlockchainManager
         bc_manager = BlockchainManager()
 
         # send the vote to the blockchain
-        tx_receipt = bc_manager.sendVote(vote_id, vote_data)
+        tx_receipt = bc_manager.sendVote(bc_vote.id, vote_data)
 
-        # sog and return the result
         if tx_receipt:
-            print(f"Transaction successful for vote_id {vote_id}: {tx_receipt}")
+            print(f"Transaction successful for vote_id {bc_vote.id}: {tx_receipt}")
+            bc_vote.status = bc_vote.COMPLETE
+            bc_vote.save()
             return {"status": "success", "transaction_receipt": tx_receipt}
         else:
-            print(f"Transaction failed for vote_id {vote_id}")
-            return {"status": "failed", "error": "Transaction failed"}
+            print(f"Transaction failed for vote_id {bc_vote.id}")
+            bc_vote.vote_data = vote_data
+            bc_vote.status = bc_vote.FAILED
+            bc_vote.save()
 
     except Exception as e:
-        print(f"An error occurred while processing vote_id {vote_id}: {e}")
+        print(f"An error occurred while processing vote_id {bc_vote.id}: {e}")
 
-        # Retry the task in case of failure
-        raise self.retry(exc=e)
 
 
 

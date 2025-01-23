@@ -29,7 +29,6 @@ class Candidate(models.Model):
     ballot = models.ForeignKey(Ballot, on_delete=models.CASCADE, related_name='candidates')
     title = models.CharField(max_length=255)
 
-
     def __str__(self):
         return self.title
 
@@ -54,6 +53,15 @@ class Vote(models.Model):
 
 
 class Blockchain_Vote(models.Model):
+    COMPLETE = "complete"
+    IN_PROGRESS = "in_progress"
+    FAILED = "failed"
+    STATUS_CHOICES = [(COMPLETE, "COMPLETE"),(IN_PROGRESS, "IN_PROGRESS"), (FAILED, "FAILED")]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='blockchain_vote')
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(choices=STATUS_CHOICES, default=IN_PROGRESS)
+
+    # if vote fails to be uploaded to blockchain, save it here
+    vote_data = models.JSONField(default=dict)

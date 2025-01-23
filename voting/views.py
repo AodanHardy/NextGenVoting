@@ -208,15 +208,15 @@ def vote_summary(request, vote_id):
 
             # after ballots
 
-            # creating blockchain vote obj
+            # create blockchain vote object and save it (so that it appears in the database)
+            # then send the id to cast vote to async send the vote to blockchain
+            #
 
             bc_vote = Blockchain_Vote(election=electionObj)
-
-            # maybe pass this into async and save it once complete
-            # (also maybe add completed boolean to table and set it to true when done)
             bc_vote.save()
 
-            cast_vote_async(bc_vote.id, str(blockchainArray))
+
+            cast_vote_async.delay(bc_vote.id, str(blockchainArray))
 
 
             '''

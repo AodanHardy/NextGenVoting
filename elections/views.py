@@ -55,13 +55,22 @@ def manage_election(request, election_id):
             if election.use_blockchain:
                 bm = BlockchainManager()
 
-                blockchainVotes = Blockchain_Vote.objects.filter(election=election)
+                # get all blockchain keys (BC_VOTE ids)
+                blockchainVotes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.COMPLETE)
                 votes = []
 
+                # get each vote from blockchain and add to votes
                 for vote in blockchainVotes:
 
                     votes.append(bm.getVote(vote.id))
 
+                # if theres any failed votes, they will be saved in vote data
+                failed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.FAILED)
+                for vote in failed_votes:
+                    votes.append(vote.vote_data)
+                    # empty vote data after for security
+                    vote.vote_data = dict({})
+                    vote.save()
 
                 # send to somthing that will organise the votes
                 organisedVotesByBallots = organise_votes_by_ballot(votes)
