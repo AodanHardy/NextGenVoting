@@ -53,7 +53,6 @@ def voting_intro(request, voter_id):
             ballot_data = {
                 'id': ballot.id,
                 'title': ballot.title,
-                'description': ballot.description,
                 'voting_type': ballot.voting_type,
                 'candidates': [candidate.id for candidate in ballot.candidates.all()],
                 'voteData': []
