@@ -9,6 +9,11 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, 'home.html')
 
+def about(request):
+    return render(request, 'about.html')
+
+def voting_info(request):
+    return render(request, 'voting-info.html')
 
 def signup(request):
     if request.method == 'POST':
@@ -20,3 +25,5 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+

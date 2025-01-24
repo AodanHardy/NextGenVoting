@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="about-section text-center py-5">
+    <div class="container">
+        <h1 class="about-title">About NextGen Voting</h1>
+        <p class="about-intro">
+            NextGen Voting is a secure, transparent, and innovative online voting platform designed to make elections efficient and trustworthy.
+            By integrating blockchain technology, we ensure the integrity of every vote while providing a seamless experience for voters and organizers alike.
+        </p>
+    </div>
+</div>
+
+<div class="features-section py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Feature 1 -->
+            <div class="col-md-4 text-center">
+                <div class="feature-card p-4">
+                    <img src="{% static '/images/secure-icon.png' %}" alt="Secure" class="feature-icon">
+                    <h3>Secure</h3>
+                    <p>Your votes are encrypted and stored securely using blockchain technology, making them tamper-proof.</p>
+                </div>
+            </div>
+            <!-- Feature 2 -->
+            <div class="col-md-4 text-center">
+                <div class="feature-card p-4">
+                    <img src="{% static '/images/transparent-icon.png' %}" alt="Transparent" class="feature-icon">
+                    <h3>Transparent</h3>
+                    <p>Every vote can be verified while ensuring voter privacy, fostering trust and confidence in the process.</p>
+                </div>
+            </div>
+            <!-- Feature 3 -->
+            <div class="col-md-4 text-center">
+                <div class="feature-card p-4">
+                    <img src="{% static '/images/easy-icon.png' %}" alt="User-Friendly" class="feature-icon">
+                    <h3>User-Friendly</h3>
+                    <p>Our platform is designed to make voting easy for everyone, with an intuitive and modern interface.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="team-section py-5 bg-light">
+    <div class="container text-center">
+        <h2>Meet the Team</h2>
+        <p class="team-intro">Our dedicated team is committed to bringing the most secure and efficient voting solution to life.</p>
+        <div class="row">
+            <!-- Team Member 1 -->
+            <div class="col-md-3">
+                <img src="{% static '/images/team1.jpg' %}" alt="Team Member 1" class="team-photo rounded-circle">
+                <h5>Jane Doe</h5>
+                <p>Project Manager</p>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="col-md-3">
+                <img src="{% static '/images/team2.jpg' %}" alt="Team Member 2" class="team-photo rounded-circle">
+                <h5>John Smith</h5>
+                <p>Blockchain Specialist</p>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="col-md-3">
+                <img src="{% static '/images/team3.jpg' %}" alt="Team Member 3" class="team-photo rounded-circle">
+                <h5>Sarah Lee</h5>
+                <p>UI/UX Designer</p>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="col-md-3">
+                <img src="{% static '/images/team4.jpg' %}" alt="Team Member 4" class="team-photo rounded-circle">
+                <h5>Mike Brown</h5>
+                <p>Backend Developer</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
