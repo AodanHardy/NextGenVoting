@@ -164,10 +164,11 @@ def manage_election(request, election_id):
 
     # Prepare results
     for ballot in election.ballots.all():
+        ballot_winners = []
         # check if results dict is not empty
         if ballot.results_data:
             results = ballot.results_data
-            ballot_winners = []
+
 
             if ballot.voting_type == "RCV":
                 winners = results.get('winners', [])
@@ -177,13 +178,17 @@ def manage_election(request, election_id):
                 winners = []
                 for id in winnersIds:
                     winners.append(Candidate.objects.get(id=id))
+                # if there's a draw, put them in the one line and say draw rather than list both
+                if len(winners) > 1:
+                    winners = [f'Draw - {winners[0]} - {winners[1]}']
+
 
 
             ballot_winners.extend(winners)
 
-            ballot_results.append({'ballot': ballot,
-                                   'winners': ballot_winners,
-                                   'no_of_winners': ballot.number_of_winners})
+        ballot_results.append({'ballot': ballot,
+                               'winners': ballot_winners,
+                               'no_of_winners': ballot.number_of_winners})
 
     return render(request, 'manage_election.html', {'election': election,
                                                     'voters_count': voterCount,
