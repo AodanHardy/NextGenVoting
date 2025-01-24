@@ -16,10 +16,8 @@ class Ballot(models.Model):
 
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='ballots')
     title = models.CharField(max_length=255)
-    description = models.TextField()
     voting_type = models.CharField(max_length=3, choices=VOTING_TYPE_CHOICES)
     number_of_winners = models.IntegerField(default=1)
-    results_published = models.BooleanField(default=False)
     results_data = models.JSONField(default=dict)
 
     def __str__(self):
@@ -49,7 +47,6 @@ class Vote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     ballot = models.ForeignKey('Ballot', on_delete=models.CASCADE, related_name='votes')
     vote_data = models.JSONField()
-    blockchain_transaction_id = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
