@@ -1,38 +1,25 @@
 {% extends 'userbase.html' %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Your Elections</h2>
-    <div class="row">
-
+<div class="container mt-5">
+    <h2 class="dashboard-title text-center mb-4">Your Elections</h2>
     {% if elections %}
-        {% for election in elections %}
-        <div class="col-md-4 mb-4">
-            <div class="election-card h-100">
-                <div class="card-body text-center">
-                    <h5 class="election-card-title">{{ election.title }}</h5>
-                    <p class="election-card-description">{{ election.description }}</p>
-
-                    <p class="manage-election-status">
-                    <span class="status {{ election.status }}">{{ election.get_status_display }}</span>
-                    </p>
-
-                    <a href="{% url 'manage_election' election.id %}" class="btn btn-primary">View Election</a>
-
+        <div class="elections-list">
+            {% for election in elections %}
+            <div class="election-item">
+                <div class="election-details">
+                    <h3 class="election-title">{{ election.title }}</h3>
+                    <p class="election-description">{{ election.description }}</p>
+                    <span class="status-badge status-{{ election.status|lower }}">{{ election.get_status_display }}</span>
+                </div>
+                <div class="election-actions">
+                    <a href="{% url 'manage_election' election.id %}" class="btn btn-primary manage-btn">Manage Election</a>
                 </div>
             </div>
+            {% endfor %}
         </div>
-
-        {% endfor %}
-
-
-
-
-
     {% else %}
-    You don't currently have any Elections
+        <p class="text-center no-elections">You don’t currently have any elections. <a href="{% url 'add_election' %}">Create one now</a>.</p>
     {% endif %}
-    </div>
 </div>
 {% endblock %}
-
