@@ -18,10 +18,13 @@ from .utils import ElectionData, BallotData
 
 # Create your views here.
 
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def dashboard(request):
-    user_elections = Election.objects.filter(user=request.user)
+    user_elections = Election.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'dashboard.html', {'elections': user_elections})
+
 
 
 # page for viewing individual election
