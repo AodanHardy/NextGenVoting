@@ -7,7 +7,7 @@ from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from voting.blockchain import BlockchainManager
 from .emailManager import EmailManager, sendAllEmails_async
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
-from .models import Election, ElectionResults
+from .models import Election
 from voting.models import Ballot, Candidate, Voter, Vote, Blockchain_Vote
 from django.contrib.auth.decorators import login_required
 
@@ -85,22 +85,18 @@ def manage_election(request, election_id):
 
                     ballot = Ballot.objects.get(id=ballotId)
 
-                    result = ElectionResults()
-                    result.election = election
-                    result.ballot = ballot
-
                     # call FPP algorithm for FPP or YN votes
                     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                         processor = FPTPVoteProcessor(candidates_dict, vote_list)
-                        result.results_data = processor.result
+                        ballot.results_data = processor.result
 
                     # ranked choice
                     elif ballot.voting_type == "RCV":
                         processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
-                        result.results_data = processor.finalize_results()
+                        ballot.results_data = processor.finalize_results()
 
                     # save results
-                    result.save()
+                    ballot.save()
                     election.results_published = True
                     election.save()
 
@@ -143,22 +139,18 @@ def manage_election(request, election_id):
 
                     # call counting algorithm
 
-                    result = ElectionResults()
-                    result.election = election
-                    result.ballot = ballot
-
                     # call FPP algorithm for FPP or YN votes
                     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                         processor = FPTPVoteProcessor(candidates_dict, vote_list)
-                        result.results_data = processor.result
+                        ballot.results_data = processor.result
 
                     # ranked choice
                     elif ballot.voting_type == "RCV":
                         processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
-                        result.results_data = processor.finalize_results()
+                        ballot.results_data = processor.finalize_results()
 
                     # save results
-                    result.save()
+                    ballot.save()
                     election.results_published = True
                     election.save()
 
@@ -169,16 +161,16 @@ def manage_election(request, election_id):
 
     # Prepare results
     for ballot in election.ballots.all():
-
-        results = ballot.results.all()
-        ballot_winners = []
-        for result in results:
+        # check if results dict is not empty
+        if ballot.results_data:
+            results = ballot.results_data
+            ballot_winners = []
 
             if ballot.voting_type == "RCV":
-                winners = result.results_data.get('winners', [])
+                winners = results.get('winners', [])
 
             elif ballot.voting_type == "FPP" or ballot.voting_type == "YN":
-                winnersIds = getWinningVote(result.results_data)
+                winnersIds = getWinningVote(ballot.results_data)
                 winners = []
                 for id in winnersIds:
                     winners.append(Candidate.objects.get(id=id))
@@ -186,9 +178,9 @@ def manage_election(request, election_id):
 
             ballot_winners.extend(winners)
 
-        ballot_results.append({'ballot': ballot,
-                               'winners': ballot_winners,
-                               'no_of_winners': ballot.number_of_winners})
+            ballot_results.append({'ballot': ballot,
+                                   'winners': ballot_winners,
+                                   'no_of_winners': ballot.number_of_winners})
 
     return render(request, 'manage_election.html', {'election': election,
                                                     'voters_count': voterCount,
@@ -197,8 +189,7 @@ def manage_election(request, election_id):
 @login_required
 def view_fpp_results(request, ballot_id):  # view results function
     ballot = get_object_or_404(Ballot, id=ballot_id, election__user=request.user)
-    results = ballot.results.first()
-    results_data = results.results_data
+    results_data = ballot.results_data
     candidates = {str(c.id): c.title for c in ballot.candidates.all()}
 
     # if its FPP, send to FPP html template

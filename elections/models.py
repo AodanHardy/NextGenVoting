@@ -28,7 +28,7 @@ class Election(models.Model):
     def __str__(self):
         return self.title
 
-
+'''
 class ElectionResults(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='results')
     ballot = models.ForeignKey('voting.Ballot', on_delete=models.CASCADE, related_name='results')
@@ -36,3 +36,4 @@ class ElectionResults(models.Model):
 
     def __str__(self):
         return f"Results for {self.election.title}"
+'''
