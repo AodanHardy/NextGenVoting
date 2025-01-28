@@ -198,18 +198,6 @@ input {
     margin-top: 40px;
 }
 
-.no-elections a {
-    color: #007bff;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.no-elections a:hover {
-    text-decoration: underline;
-}
-
-
-
 
 /* election review page */
 .review-container {

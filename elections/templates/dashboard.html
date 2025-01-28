@@ -19,7 +19,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-center no-elections">You don’t currently have any elections. <a href="{% url 'add_election' %}">Create one now</a>.</p>
+        <p class="text-center no-elections">You don’t currently have any elections.<a href="{% url 'add_election' %}">Create one now</a></p>
     {% endif %}
 </div>
 {% endblock %}
