@@ -78,7 +78,12 @@
     <h3 class="manage-election-subtitle">Voters: {{ voters_count }}</h3>
     <ul class="manage-election-voters">
         {% for voter in election.voters.all|slice:":10" %}
-            <li class="voter-item">{{ voter.name }} ({{ voter.email }})</li>
+            <li class="voter-item">{{ voter.name }} ({{ voter.email }})
+
+                {% if voter.voted %}
+
+                {% endif %}
+                </li>
         {% endfor %}
     </ul>
 </div>

@@ -48,7 +48,7 @@ def voting_intro(request, voter_id):
         }
 
         # Get ballots for the election
-        ballots = election.ballots.all()
+        ballots = election.ballots.all().order_by('id')
         for ballot in ballots:
             ballot_data = {
                 'id': ballot.id,
@@ -68,7 +68,7 @@ def voting_intro(request, voter_id):
 
     return render(request, 'voting_intro.html', {
         'election': election,
-        'ballots': election.ballots.all(),
+        'ballots': election.ballots.all().order_by('id'),
         'voter': voter
     })
 

@@ -163,7 +163,7 @@ def manage_election(request, election_id):
     ballot_results = []
 
     # Prepare results
-    for ballot in election.ballots.all():
+    for ballot in election.ballots.all().order_by('id'):
         ballot_winners = []
         # check if results dict is not empty
         if ballot.results_data:
