@@ -21,6 +21,9 @@
                 </div>
             {% endfor %}
         </div>
+        {% if error_msg %}
+            <h3 style="color: red"> {{ error_msg }}</h3>
+        {% endif %}
 
         <button type="submit" class="ballot-submit">Submit</button>
     </form>

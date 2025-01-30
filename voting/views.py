@@ -6,7 +6,7 @@ from django.urls import reverse
 from elections.models import Election
 from voting.blockchain import BlockchainManager, cast_vote_async
 from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
-from voting.utils import get_ranked_order
+from voting.utils import get_ranked_order, rcv_validator
 
 
 # Create your views here.
@@ -102,6 +102,15 @@ def voting_ballot(request, vote_id, ballot_index):
 
         # check if ranked choice
         if ballot_data.get('voting_type') == 'RCV':
+            isValid, errorMsg = rcv_validator(request.POST, candidate_ids)
+            if not isValid:
+                return render(request, "ballot_ranked_choice.html", {
+                    'ballot': ballot_data,
+                    'voter_data': voter_data,
+                    'ballot_index': ballot_index,
+                    'candidates': candidates,
+                    'error_msg': errorMsg
+                })
             rankedChoiceDict = {}
             for candidate_id in candidate_ids:
                 rc_vote = request.POST.get(str(candidate_id))
