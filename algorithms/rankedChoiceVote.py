@@ -59,6 +59,7 @@ class RankedChoiceVoteProcessor:
         self.rounds = []
         self.quota = None
         self.winners = []
+        self.ties = []
 
         self.processVotes()
 
@@ -73,7 +74,8 @@ class RankedChoiceVoteProcessor:
             "num_winners": self.num_winners,
             "quota": self.quota,
             "rounds": self.rounds,
-            "winners": self.winners
+            "winners": self.winners,
+            "ties": self.ties
         }
 
         return result_data
@@ -83,7 +85,7 @@ class RankedChoiceVoteProcessor:
         self.quota = self._calculate_quota()
 
         round_number = 1
-        while len(self.winners) < self.num_winners:
+        while len(self.winners) + len(self.ties) < self.num_winners:
             round_data = self._process_round(round_number)
             self.rounds.append(round_data)
             round_number += 1
@@ -137,7 +139,13 @@ class RankedChoiceVoteProcessor:
             # Checking if it's safe to delete
             # (If deleting multiple candidates who are drawing could mean
             # that there are lest candidates than winners available)
-            if len(lowestCandidates) + len(self.winners) <= len(self.candidates) - self.num_winners:
+            #if len(lowestCandidates) + (len(self.winners) + len(self.ties)) <= len(self.candidates) - self.num_winners:
+
+            numberToBeEliminated = len(lowestCandidates)
+            numberCanBeEliminated = self.num_winners - (len(self.winners))
+
+            #if len(lowestCandidates) >= self.num_winners - (len(self.winners) + len(self.ties)):
+            if numberToBeEliminated <= numberCanBeEliminated:
                 # Eliminate all candidates with the lowest votes
                 eliminated_names = []
                 for candidate_id, candidate_info in lowestCandidates.items():
@@ -155,6 +163,12 @@ class RankedChoiceVoteProcessor:
 
                 # Need to implement logic for tiebreaker if not safe to delete tied candidates
                 print("not safe to eliminate")
+                tiedNames = []
+                for candidate_id, candidate_info in lowestCandidates.items():
+                    tiedNames.append(candidate_info.get('name'))
+                self.ties = tiedNames
+
+
 
                 # First tiebreaker idea -> check who had the least first choice votes and eliminate them
 
@@ -166,7 +180,10 @@ class RankedChoiceVoteProcessor:
 
         # If there are as many remaining candidates as winners needed then
         # there's no point continuing to next round
-        if len(remaining_valid_candidates) == remaining_winners_needed:
+        if len(remaining_valid_candidates) <= remaining_winners_needed:
+
+            print()
+
             for candidate_id in remaining_valid_candidates:
                 if not self.candidates[candidate_id]["elected"]:
                     self.winners.append(self.candidates[candidate_id]["name"])

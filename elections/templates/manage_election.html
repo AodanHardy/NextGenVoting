@@ -49,17 +49,35 @@
 
                     <h3 class="manage-election-subtitle">Results</h3>
 
-                    {% if ballot.no_of_winners  == 1%}
-                        <h4 class="manage-election-subsubtitle">Winner</h4>
-                    {% else %}
-                        <h4 class="manage-election-subsubtitle">Winners</h4>
+
+
+                    {% if ballot.winners %}
+                        {% if ballot.no_of_winners  == 1%}
+                            <h4 class="manage-election-subsubtitle">Winner</h4>
+                        {% else %}
+                            <h4 class="manage-election-subsubtitle">Winners</h4>
+                        {% endif %}
+
+                            <ul class="manage-election-candidates">
+                                {% for winner in ballot.winners %}
+                                    <li class="candidate-item">{{ winner }}</li>
+                                {% endfor %}
+                            </ul>
                     {% endif %}
 
+                    {% if ballot.ties %}
+                        <h4 class="manage-election-subsubtitle">Ties</h4>
                         <ul class="manage-election-candidates">
-                            {% for winner in ballot.winners %}
-                                <li class="candidate-item">{{ winner }}</li>
-                            {% endfor %}
-                        </ul>
+
+                                {% for tie in ballot.ties %}
+                                    <li class="candidate-item">{{ tie }}</li>
+                                {% endfor %}
+                            </ul>
+                    {% endif %}
+
+
+
+
                     <div class="text-center mt-4">
                         <a href="{% url 'view_fpp_results' ballot.ballot.id %}" class="btn btn-secondary">View Full Results</a>
                     </div>

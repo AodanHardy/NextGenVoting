@@ -5,25 +5,46 @@
 
 <h2>Quota: {{ quota }}</h2>
 
-<h3>Winners: {{ winners|join:", " }}</h3>
+ {% if winners %}
+    <h3>Winners: {{ winners|join:", " }}</h3>
+{% endif %}
+
+ {% if ties %}
+    <h3>Ties: {{ ties|join:", " }}</h3>
+{% endif %}
+
 
 <div id="rounds-container">
     {% for round in rounds %}
         <div class="round-section">
-            <h3>Round {{ round.round_number }}</h3>
-            <p>Elected: {{ round.elected }}</p>
-            <p>Eliminated: {{ round.eliminated|join:", " }}</p>
-            <p>Surplus: {{ round.surplus }}</p>
+            <h2>Round {{ round.round_number }}</h2>
+
+
 
             <canvas id="initialVotesChart{{ round.round_number }}"></canvas>
 
+
+            {% if round.elected %}
+                <h5>Elected: {{ round.elected }}</h5>
+            {% endif %}
+
+            {% if round.eliminated %}
+                <h5>Eliminated: {{ round.eliminated|join:", " }}</h5>
+            {% endif %}
+
+            {% if round.surplus %}
+                <h5>Surplus: {{ round.surplus }}</h5>
+            {% endif %}
+
             <!-- Transfers Section -->
-            <h4>Transfers:</h4>
-            <ul>
-                {% for candidate, votes in round.transfers.items %}
-                    <li>{{ candidate }}: {{ votes }} votes</li>
-                {% endfor %}
-            </ul>
+            {% if round.transfers %}
+                <h3>Transfers:</h3>
+                <ul>
+                    {% for candidate, votes in round.transfers.items %}
+                        <li>{{ candidate }}: {{ votes }} votes</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
@@ -43,7 +64,7 @@
             data: {
                 labels: initialVotesLabels,
                 datasets: [{
-                    label: 'Initial Votes',
+                    label: 'Votes',
                     data: initialVotesData,
                     backgroundColor: 'rgb(75,130,192)',
                     borderWidth: 1

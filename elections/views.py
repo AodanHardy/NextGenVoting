@@ -103,11 +103,6 @@ def manage_election(request, election_id):
                     election.results_published = True
                     election.save()
 
-
-
-
-
-
             # *** if the election doesn't use blockchain
             if not election.use_blockchain:
                 # get all ballots form this election
@@ -128,8 +123,6 @@ def manage_election(request, election_id):
                     candidates_dict = {}
                     for candidate in candidates_list:
                         candidates_dict[candidate.id] = candidate.title
-
-
 
 
                     '''
@@ -165,15 +158,15 @@ def manage_election(request, election_id):
     # Prepare results
     for ballot in election.ballots.all().order_by('id'):
         ballot_winners = []
+        ballot_ties = []
         # check if results dict is not empty
         if ballot.results_data:
             results = ballot.results_data
 
+            winners = results.get('winners', [])
+            ties = results.get('ties', [])
 
-            if ballot.voting_type == "RCV":
-                winners = results.get('winners', [])
-
-            elif ballot.voting_type == "FPP" or ballot.voting_type == "YN":
+            if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                 winnersIds = getWinningVote(ballot.results_data)
                 winners = []
                 for id in winnersIds:
@@ -185,11 +178,17 @@ def manage_election(request, election_id):
 
 
             ballot_winners.extend(winners)
+            ballot_ties.extend(ties)
+
+
 
         ballot_results.append({'ballot': ballot,
                                'winners': ballot_winners,
+                               'ties': ballot_ties,
                                'no_of_winners': ballot.number_of_winners})
-
+        winners = []
+        ties = []
+    print()
     return render(request, 'manage_election.html', {'election': election,
                                                     'voters_count': voterCount,
                                                     'ballot_results': ballot_results})
@@ -218,6 +217,7 @@ def view_fpp_results(request, ballot_id):  # view results function
         candidates = results_data.get("candidates", {})
         quota = results_data.get("quota")
         winners = results_data.get("winners", [])
+        ties = results_data.get("ties", [])
         processed_rounds = []
 
         for round_data in rounds:
@@ -233,12 +233,12 @@ def view_fpp_results(request, ballot_id):  # view results function
                 "final_votes": {
                     candidates[cid]["name"]: votes
                     for cid, votes in round_data["final_votes"].items()
-                },
+                } if "final_votes" in round_data else {},
 
                 "transfers": {
                     candidates[cid]["name"]: votes
                     for cid, votes in round_data["transfers"].items()
-                },
+                } if "transfers" in round_data else {},
             }
             processed_rounds.append(processed_round)
 
@@ -247,6 +247,7 @@ def view_fpp_results(request, ballot_id):  # view results function
             "quota": quota,
             "rounds": processed_rounds,
             "winners": winners,
+            "ties": ties,
         }
         return render(request, "view_results_RCV.html", context)
 
