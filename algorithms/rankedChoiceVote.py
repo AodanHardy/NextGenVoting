@@ -139,12 +139,14 @@ class RankedChoiceVoteProcessor:
             # Checking if it's safe to delete
             # (If deleting multiple candidates who are drawing could mean
             # that there are lest candidates than winners available)
-            #if len(lowestCandidates) + (len(self.winners) + len(self.ties)) <= len(self.candidates) - self.num_winners:
 
             numberToBeEliminated = len(lowestCandidates)
-            numberCanBeEliminated = self.num_winners - (len(self.winners))
 
-            #if len(lowestCandidates) >= self.num_winners - (len(self.winners) + len(self.ties)):
+            remainingCandidates = len(self.candidates) - len(self.winners)
+            winningSeatsRemaining = self.num_winners - len(self.winners)
+
+            numberCanBeEliminated = remainingCandidates - winningSeatsRemaining
+
             if numberToBeEliminated <= numberCanBeEliminated:
                 # Eliminate all candidates with the lowest votes
                 eliminated_names = []
