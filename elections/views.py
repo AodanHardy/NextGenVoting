@@ -499,7 +499,7 @@ def review_election(request):
     return render(request, 'review_election.html', {'election_data': election_data})
 
 
-
+@login_required
 def edit_ballot(request, ballot_id):
     ballot = get_object_or_404(Ballot, id=ballot_id)
 
@@ -510,35 +510,43 @@ def edit_ballot(request, ballot_id):
     }
 
     if request.method == 'POST':
-        ballot_form = BallotForm(request.POST)
-        candidates_form = CandidatesForm(request.POST)
-
-        if ballot_form.is_valid() and candidates_form.is_valid():
-            # Update Ballot details
-            ballot.title = ballot_form.cleaned_data['ballot_title']
-            ballot.voting_type = VOTING_TYPE_MAPPING.get(ballot_form.cleaned_data['voting_type'])
-            ballot.number_of_winners = candidates_form.cleaned_data.get('number_of_winners', 1)
-
-            # Update Candidates
-
-            # delete existing candidates
-            existingCandidates = Candidate.objects.filter(ballot_id=ballot_id)
-            existingCandidates.delete()
-
-            newCandidates = candidates_form.cleaned_data['candidates'].split(',')
-            for candidate_name in newCandidates:
-                Candidate.objects.create(
-                    ballot=ballot,
-                    title=candidate_name
-                )
-
-
-            ballot.save()
-
-            messages.success(request, "Ballot updated successfully!")
+        if "delete" in request.POST:
+            # delete candidates
+            candidates = Candidate.objects.filter(ballot=ballot)
+            candidates.delete()
+            # delete ballot
+            ballot.delete()
             return redirect('manage_election', ballot.election.id)
         else:
-            messages.error(request, "Please correct the errors below.")
+            ballot_form = BallotForm(request.POST)
+            candidates_form = CandidatesForm(request.POST)
+
+            if ballot_form.is_valid() and candidates_form.is_valid():
+                # Update Ballot details
+                ballot.title = ballot_form.cleaned_data['ballot_title']
+                ballot.voting_type = VOTING_TYPE_MAPPING.get(ballot_form.cleaned_data['voting_type'])
+                ballot.number_of_winners = candidates_form.cleaned_data.get('number_of_winners', 1)
+
+                # Update Candidates
+
+                # delete existing candidates
+                existingCandidates = Candidate.objects.filter(ballot_id=ballot_id)
+                existingCandidates.delete()
+
+                newCandidates = candidates_form.cleaned_data['candidates'].split(',')
+                for candidate_name in newCandidates:
+                    Candidate.objects.create(
+                        ballot=ballot,
+                        title=candidate_name
+                    )
+
+
+                ballot.save()
+
+                messages.success(request, "Ballot updated successfully!")
+                return redirect('manage_election', ballot.election.id)
+            else:
+                messages.error(request, "Please correct the errors below.")
     else:
         # pre-populate the forms with existing data
         ballot_form = BallotForm(initial={
