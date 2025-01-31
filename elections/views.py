@@ -43,6 +43,14 @@ def manage_election(request, election_id):
             election.status = 'active'
             election.save()
 
+
+            # if a RCV ballot only has 2 candidates, switch to RCV
+            for ballot in Ballot.objects.filter(election=election):
+                noOfCandidates = len(Candidate.objects.filter(ballot=ballot))
+                if noOfCandidates == 2 and ballot.voting_type == "RCV":
+                    ballot.voting_type = "FPP"
+                    ballot.save()
+
             # trigger to send out emails here
             sendAllEmails_async.delay(election_id)
 
