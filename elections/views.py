@@ -563,3 +563,43 @@ def edit_ballot(request, ballot_id):
         'ballot_form': ballot_form,
         'candidates_form': candidates_form
     })
+
+
+def add_new_ballot(request, election_id):
+    election = get_object_or_404(Election, id=election_id)
+
+    if election.status != "pending":
+        return redirect('manage_election', election_id=election.id)
+
+    if request.method == "POST":
+        ballot_form = BallotForm(request.POST)
+        candidates_form = CandidatesForm(request.POST)
+
+        VOTING_TYPE_MAPPING = {
+            'first_past_the_post': 'FPP',
+            'ranked_choice': 'RCV',
+            'yes_no': 'YN'
+        }
+
+        if ballot_form.is_valid() and candidates_form.is_valid():
+            voting_type = VOTING_TYPE_MAPPING.get(ballot_form.cleaned_data['voting_type'])
+            ballot = Ballot.objects.create(
+                election=election,
+                title=ballot_form.cleaned_data['ballot_title'],
+                voting_type=voting_type
+            )
+
+            candidates = candidates_form.cleaned_data['candidates'].split(",")
+            for candidate in candidates:
+                ballot.candidates.create(title=candidate.strip())
+
+            return redirect('manage_election', election_id=election.id)
+    else:
+        ballot_form = BallotForm()
+        candidates_form = CandidatesForm()
+
+    return render(request, 'add_new_ballot.html', {
+        'election': election,
+        'ballot_form': ballot_form,
+        'candidates_form': candidates_form
+    })

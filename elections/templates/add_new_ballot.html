@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Add Ballot to {{ election.title }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            {{ ballot_form.as_p }}
+        </div>
+
+        <div class="mb-3">
+            {{ candidates_form.as_p }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Ballot</button>
+        <a href="{% url 'manage_election' election.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

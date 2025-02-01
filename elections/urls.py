@@ -10,8 +10,10 @@ urlpatterns = [
     path('add/voters', views.add_voters, name='add_voters'),
     path('add/review_election',  views.review_election, name='review_election'),
     path('elections/<int:election_id>/', views.manage_election, name='manage_election'),
+    path('add_new_ballot/<int:election_id>/', views.add_new_ballot, name='add_new_ballot'),
     path('<int:ballot_id>/results/', views.view_fpp_results, name='view_fpp_results'),
     path('<int:ballot_id>/edit/', views.edit_ballot, name='edit_ballot'),
+
 ]
 
 

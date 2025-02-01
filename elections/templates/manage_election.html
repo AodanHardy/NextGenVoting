@@ -90,6 +90,11 @@
             </li>
         {% endfor %}
     </ul>
+    {% if election.status == 'pending' %}
+        <div class="text-center mt-3">
+            <a href="{% url 'add_new_ballot' election.id %}" class="btn btn-primary btn-md">Add Ballot</a>
+        </div>
+    {% endif %}
 
     <hr>
 
