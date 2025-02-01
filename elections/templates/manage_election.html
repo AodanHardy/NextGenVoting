@@ -20,6 +20,10 @@
          <p class="manage-election-vote-count"><strong>Vote Count:</strong> {{ election.votes_cast }} / {{ voters_count }} </p>
     {% endif %}
 
+      {% if election.status == 'completed' %}
+          redo election
+      {% endif %}
+
     <div class="manage-election-actions">
         {% if election.status == 'pending' %}
             <form method="post">
@@ -54,7 +58,7 @@
                 </ul>
 
                 <!-- code for results summary -->
-                {% if election.results_published and election.status == 'complete' %}
+                {% if election.results_published and election.status == 'completed' %}
 
                     <h3 class="manage-election-subtitle">Results</h3>
 
