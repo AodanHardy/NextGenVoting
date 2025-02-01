@@ -38,7 +38,44 @@ def manage_election(request, election_id):
         # check if user started or ended election
         action = request.POST.get('action')
 
-        if action == 'start':
+        if action == 'restart':
+            # re-create election
+            newElection = Election.objects.create(
+                user=election.user,
+                title=election.title,
+                description=election.description,
+                use_blockchain=election.use_blockchain
+            )
+            newElection.save()
+
+            # recreate ballots
+            newBallots = []
+            ballots = Ballot.objects.filter(election=election)
+            for ballot in ballots:
+                newBallot = (Ballot.objects.create(
+                    election=newElection,
+                    title=ballot.title,
+                    voting_type=ballot.voting_type,
+                    number_of_winners=ballot.number_of_winners
+                ))
+                newBallot.save()
+                candidates = Candidate.objects.filter(ballot=ballot)
+                for candidate in candidates:
+                    Candidate.objects.create(
+                        ballot=newBallot,
+                        title=candidate.title
+                    )
+
+            #  recreate voters
+            voters = Voter.objects.filter(election=election)
+            for voter in voters:
+                Voter.objects.create(
+                    election=newElection,
+                    name=voter.name,
+                    email=voter.email
+                )
+
+        elif action == 'start':
             election.start_time = timezone.now()
             election.status = 'active'
             election.save()

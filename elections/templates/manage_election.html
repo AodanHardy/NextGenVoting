@@ -21,7 +21,12 @@
     {% endif %}
 
       {% if election.status == 'completed' %}
-          redo election
+          <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="action" value="restart"
+                        onclick="return confirm('Are you sure you want to recreate this election?');"
+                        class="btn-manage-election btn-restart">Recreate Election</button>
+            </form>
       {% endif %}
 
     <div class="manage-election-actions">
