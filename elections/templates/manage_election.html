@@ -17,7 +17,9 @@
         {% if election.status == 'pending' %}
             <form method="post">
                 {% csrf_token %}
-                <button type="submit" name="action" value="start" class="btn-manage-election btn-start">Start Election</button>
+                <button type="submit" name="action" value="start"
+                        onclick="return confirm('Are you sure you want to start this election? You cannot undo this action');"
+                        class="btn-manage-election btn-start">Start Election</button>
             </form>
         {% elif election.status == 'active' %}
             <form method="post">
@@ -45,7 +47,7 @@
                 </ul>
 
                 <!-- code for results summary -->
-                {% if election.results_published %}
+                {% if election.results_published and election.status == 'complete' %}
 
                     <h3 class="manage-election-subtitle">Results</h3>
 
