@@ -11,6 +11,15 @@
     {% endif %}
 
     <p class="manage-election-description"><strong>Description:</strong> {{ election.description }}</p>
+
+    <p class="manage-election-description"><strong>Vote Security Type:</strong>
+        {% if election.use_blockchain %}
+            Blockchain
+        {% else %}
+        Standard
+        {% endif %}
+    </p>
+
     <p class="manage-election-status">
         <strong>Status:</strong>
         <span class="status {{ election.status }}">{{ election.get_status_display }}</span>

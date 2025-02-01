@@ -31,4 +31,4 @@ class VoterUploadForm(forms.Form):
 class EditElectionForm(forms.ModelForm):
     class Meta:
         model = Election
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'use_blockchain']
