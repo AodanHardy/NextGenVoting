@@ -14,6 +14,7 @@ urlpatterns = [
     path('add_new_ballot/<int:election_id>/', views.add_new_ballot, name='add_new_ballot'),
     path('<int:ballot_id>/results/', views.view_fpp_results, name='view_fpp_results'),
     path('<int:ballot_id>/edit/', views.edit_ballot, name='edit_ballot'),
+    path("election/<int:election_id>/update-voters/", views.update_voters, name="update_voters"),
 
 ]
 

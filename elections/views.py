@@ -655,3 +655,29 @@ def edit_election(request, election_id):
         form = EditElectionForm(instance=election)
 
     return render(request, "edit_election.html", {"form": form, "election": election})
+
+
+def update_voters(request, election_id):
+    election = get_object_or_404(Election, id=election_id)
+    voters = Voter.objects.filter(election=election)
+
+    if request.method == "POST":
+        form = VoterUploadForm(request.POST, request.FILES)
+        voterFile = request.FILES['voter_file']
+        if form.is_valid():
+            # remove old voters
+            Voter.objects.filter(election=election).delete()
+
+            decoded_file = voterFile.read().decode('utf-8').splitlines()
+            reader = csv.DictReader(decoded_file)
+
+            for row in reader:
+                name = row.get('name')
+                email = row.get('email')
+                Voter.objects.create(election=election, name=name, email=email)
+            return redirect("update_voters", election_id=election.id)
+
+    else:
+        form = VoterUploadForm()
+
+    return render(request, "update_voters.html", {"election": election, "voters": voters, "form": form})

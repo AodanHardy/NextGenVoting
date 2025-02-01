@@ -125,7 +125,11 @@
 
     <hr>
 
-    <h3 class="manage-election-subtitle">Voters: {{ voters_count }}</h3>
+    <h3 class="manage-election-subtitle">Voters: 10 of {{ voters_count }}</h3>
+{% if election.status == 'pending' %}
+        <a style="margin-bottom: 10px" href="{% url 'update_voters' election.id %}" class="btn btn-primary btn-md">View and Update Voters</a>
+{% endif %}
+
     <ul class="manage-election-voters">
         {% for voter in election.voters.all|slice:":10" %}
             <li class="voter-item">{{ voter.name }} ({{ voter.email }})

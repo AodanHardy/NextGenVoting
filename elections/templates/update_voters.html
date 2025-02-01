@@ -1,0 +1,42 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Update Voters for {{ election.title }}</h2>
+
+    <!-- Upload Voters -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Upload New Voter List</button>
+    </form>
+
+    <hr>
+
+    <!-- Search Bar -->
+    <input type="text" id="voterSearch" class="form-control" placeholder="Search voters..." onkeyup="filterVoters()">
+
+    <!-- Voter List -->
+    <h3>Current Voters</h3>
+    <ul id="voterList" class="list-group">
+        {% for voter in voters %}
+            <li class="list-group-item">{{ voter.name }} ({{ voter.email }})</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+function filterVoters() {
+    var input, filter, ul, li, i, txtValue;
+    input = document.getElementById("voterSearch");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("voterList");
+    li = ul.getElementsByTagName("li");
+
+    for (i = 0; i < li.length; i++) {
+        txtValue = li[i].textContent || li[i].innerText;
+        li[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+    }
+}
+</script>
+{% endblock %}
