@@ -6,7 +6,7 @@ from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from voting.blockchain import BlockchainManager
 from .emailManager import EmailManager, sendAllEmails_async
-from .forms import ElectionDetailsForm, BallotForm, CandidatesForm
+from .forms import ElectionDetailsForm, BallotForm, CandidatesForm, EditElectionForm
 from .models import Election
 from voting.models import Ballot, Candidate, Voter, Vote, Blockchain_Vote
 from django.contrib.auth.decorators import login_required
@@ -603,3 +603,18 @@ def add_new_ballot(request, election_id):
         'ballot_form': ballot_form,
         'candidates_form': candidates_form
     })
+
+
+def edit_election(request, election_id):
+    election = get_object_or_404(Election, id=election_id)
+
+    if request.method == "POST":
+        form = EditElectionForm(request.POST, instance=election)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Election updated successfully.")
+            return redirect("manage_election", election_id=election.id)
+    else:
+        form = EditElectionForm(instance=election)
+
+    return render(request, "edit_election.html", {"form": form, "election": election})

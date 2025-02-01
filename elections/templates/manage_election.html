@@ -3,6 +3,13 @@
 {% block content %}
 <div class="manage-election-container">
     <h2 class="manage-election-title">Election: {{ election.title }}</h2>
+
+    {% if election.status == 'pending' %}
+         <div class="text-center">
+            <a href="{% url 'edit_election' election.id %}" class="btn btn-secondary btn-md">Edit Ballot</a>
+        </div>
+    {% endif %}
+
     <p class="manage-election-description"><strong>Description:</strong> {{ election.description }}</p>
     <p class="manage-election-status">
         <strong>Status:</strong>

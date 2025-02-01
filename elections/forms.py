@@ -1,5 +1,7 @@
 from django import forms
 
+from elections.models import Election
+
 
 class ElectionDetailsForm(forms.Form):
     title = forms.CharField(max_length=200, label="Election Title")
@@ -24,3 +26,9 @@ class CandidatesForm(forms.Form):
 
 class VoterUploadForm(forms.Form):
     voter_file = forms.FileField(label="Upload Voter List (CSV format)")
+
+
+class EditElectionForm(forms.ModelForm):
+    class Meta:
+        model = Election
+        fields = ['title', 'description']
