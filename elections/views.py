@@ -195,6 +195,26 @@ def manage_election(request, election_id):
                     election.results_published = True
                     election.save()
 
+        # delete election
+        elif action == 'delete':
+            # delete everything in order of - votes, candidates, voters, ballots, election
+            if election.use_blockchain:
+                Blockchain_Vote.objects.filter(election=election).delete()
+
+            # get all ballots and loop through each deleting votes and candidates
+            ballots = Ballot.objects.filter(election=election)
+
+            for ballot in ballots:
+                Vote.objects.filter(ballot=ballot).delete()
+                Candidate.objects.filter(ballot=ballot).delete()
+                ballot.delete()
+
+            Voter.objects.filter(election=election).delete()
+            election.delete()
+
+            return redirect('dashboard')
+
+
         return redirect('manage_election', election_id=election.id)
 
     # get winners if finished

@@ -140,7 +140,22 @@
                 </li>
         {% endfor %}
     </ul>
+
+{% if election.status == 'pending' or election.status == 'completed'%}
+    <form method="post">
+        {% csrf_token %}
+        <div class="text-center">
+        <button type="submit" name="action" value="delete"
+                onclick="return confirm('Are you sure you want to delete this election?');"
+                class="btn-manage-election btn-end">Delete Election</button>
+        </div>
+    </form>
+{% endif %}
+
+
 </div>
+
+
 
 {% endblock %}
 
