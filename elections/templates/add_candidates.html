@@ -20,6 +20,10 @@
     <button type="submit">Submit Candidates</button>
 </form>
 
+{% if error_msg %}
+    <p style="color: red">{{ error_msg }}</p>
+{% endif %}
+
 
 
 

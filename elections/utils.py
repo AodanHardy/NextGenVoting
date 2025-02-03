@@ -1,6 +1,12 @@
 import ast
 from collections import defaultdict
 
+def validate_candidates(candidates):
+    if len(candidates) < 2:
+        return False, "You must enter more than 1 Candidate"
+    for candidate in candidates:
+        if len(candidate) < 1:
+            return False
 
 def organise_votes_by_ballot(votes):
     ballot_votes = defaultdict(list)

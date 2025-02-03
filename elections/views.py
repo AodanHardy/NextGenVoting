@@ -398,8 +398,11 @@ def add_ballots(request):
 @login_required
 def add_candidates(request):
     # Retrieve the current ballot and voting type from the session
+    global messages
+    messages = ""
     current_ballot = request.session.get('currentBallot')
     election_data = request.session.get('election')
+
 
     if not current_ballot or not election_data:
         # Redirect back if there's no ballot data
@@ -412,46 +415,49 @@ def add_candidates(request):
             candidates_str = form.cleaned_data['candidates']
             candidate_list = [candidate.strip() for candidate in candidates_str.split(',') if candidate.strip()]
 
-            # Get number of winners
-            num_of_winners = form.cleaned_data['number_of_winners']
-            if num_of_winners is None:
-                num_of_winners = 1
-            current_ballot['number_of_winners'] = num_of_winners
+            # validate candidates
+            if len(candidate_list) > 1:
+                # Get number of winners
+                num_of_winners = form.cleaned_data['number_of_winners']
+                if num_of_winners is None:
+                    num_of_winners = 1
+                current_ballot['number_of_winners'] = num_of_winners
 
-            # Add candidates to current ballot
-            current_ballot['candidates'].extend(candidate_list)
+                # add candidates to ballot
+                current_ballot['candidates'].extend(candidate_list)
 
-            # Update the session with current ballot
-            request.session['currentBallot'] = current_ballot
+                # update the session
+                request.session['currentBallot'] = current_ballot
 
-            # Logic to move to next ballot
-            election_data['ballots'].append(current_ballot)
-            request.session['election'] = election_data
 
-            # Clear currentBallot for the next ballot
-            del request.session['currentBallot']
+                election_data['ballots'].append(current_ballot)
+                request.session['election'] = election_data
+                del request.session['currentBallot']
 
-            # Check if there are more ballots to add
-            current_ballot_num = request.session.get('current_ballot', 1)
-            num_of_ballots = election_data['num_of_ballots']
+                # Check if there are more ballots to add
+                current_ballot_num = request.session.get('current_ballot', 1)
+                num_of_ballots = election_data['num_of_ballots']
 
-            if current_ballot_num < num_of_ballots:
-                request.session['current_ballot'] = current_ballot_num + 1
-                return redirect('elections:add_ballots')
+                if current_ballot_num < num_of_ballots:
+                    request.session['current_ballot'] = current_ballot_num + 1
+                    return redirect('elections:add_ballots')
+                else:
+                    # if all ballots are added move to voter upload
+                    # Reset current ballot
+                    request.session['current_ballot'] = 1
+                    return redirect('elections:add_voters')
             else:
-                # All ballots are added, move to voter upload
-                # Reset current ballot
-                request.session['current_ballot'] = 1
-                return redirect('elections:add_voters')
+                messages = "You must enter at least 2 candidates."
 
-    else:
-        form = CandidatesForm()
+
+    form = CandidatesForm()
 
     return render(request, 'add_candidates.html', {
         'form': form,
         'ballot_title': current_ballot['title'],
         'voting_type': current_ballot['voting_type'],
-        'candidates': current_ballot.get('candidates', [])
+        'candidates': current_ballot.get('candidates', []),
+        'error_msg': messages,
     })
 
 
