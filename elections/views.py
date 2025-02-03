@@ -5,7 +5,7 @@ from django.utils import timezone
 from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
 from voting.blockchain import BlockchainManager
-from .emailManager import EmailManager, sendAllEmails_async
+from .emailManager import sendAllEmails_async
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm, EditElectionForm
 from .models import Election
 from voting.models import Ballot, Candidate, Voter, Vote, Blockchain_Vote
@@ -18,13 +18,11 @@ from .utils import ElectionData, BallotData
 
 # Create your views here.
 
-from django.contrib.auth.decorators import login_required
 
 @login_required
 def dashboard(request):
     user_elections = Election.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'dashboard.html', {'elections': user_elections})
-
 
 
 # page for viewing individual election
@@ -75,6 +73,8 @@ def manage_election(request, election_id):
                     email=voter.email
                 )
 
+            return redirect('manage_election', newElection.id)
+
         elif action == 'start':
             election.start_time = timezone.now()
             election.status = 'active'
@@ -113,7 +113,7 @@ def manage_election(request, election_id):
 
                     votes.append(bm.getVote(vote.id))
 
-                # if theres any failed votes, they will be saved in vote data
+                # if there's any failed votes, they will be saved in vote data
                 failed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.FAILED)
                 for vote in failed_votes:
                     votes.append(vote.vote_data)
