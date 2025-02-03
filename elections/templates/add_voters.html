@@ -1,11 +1,13 @@
 {% extends 'userbase.html' %}
-
+{% load static %}
 {% block content %}
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Next</button>
+<a href="{% static 'how_to.pdf' %}" class="btn btn-secondary" download>Download How-To Guide (PDF)</a>
+
 </form>
 
 {% endblock %}
