@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 
 import csv
 from .forms import VoterUploadForm
-from .utils import VoterData, getWinningVote, organise_votes_by_ballot
+from .utils import VoterData, getWinningVote, organise_votes_by_ballot, validate_candidates
 from .utils import ElectionData, BallotData
 
 # Create your views here.
@@ -416,7 +416,9 @@ def add_candidates(request):
             candidate_list = [candidate.strip() for candidate in candidates_str.split(',') if candidate.strip()]
 
             # validate candidates
-            if len(candidate_list) > 1:
+            validCandidates, messages = validate_candidates(candidate_list)
+
+            if validCandidates:
                 # Get number of winners
                 num_of_winners = form.cleaned_data['number_of_winners']
                 if num_of_winners is None:
@@ -446,8 +448,7 @@ def add_candidates(request):
                     # Reset current ballot
                     request.session['current_ballot'] = 1
                     return redirect('elections:add_voters')
-            else:
-                messages = "You must enter at least 2 candidates."
+
 
 
     form = CandidatesForm()
