@@ -9,12 +9,27 @@ Make sure Python is installed on your system. Then, install Django.
 pip install django
 ```
 
-### 2. Install Dependencies
+### 2. Start Virtual Environment
+if there is a file in this project named venv, 
+then use this command to start it:
+```bash
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate     # On Windows (Command Prompt)
+```
+
+if there is no venv, then create one with this command:
+```bash
+python -m venv venv
+```
+
+and then activate it with the first command
+
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configuration
+### 4. Configuration
 - Ensure there is a `.env` file in the project root.
 - The only empty part should be the database password.
 - Create a Django superuser and remember the password:
@@ -68,6 +83,11 @@ celery -A nextgenvoting worker
 ---
 
 ## Usage
+goto localhost on your browser
+```
+localhost:8000/
+```
+
 
 ### 1. Sign Up
 Go to the login page and signin with your superuser details.
