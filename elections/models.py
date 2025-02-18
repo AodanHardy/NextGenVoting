@@ -25,15 +25,3 @@ class Election(models.Model):
     results_published = models.BooleanField(default=False)
     votes_cast = models.IntegerField(default=0)
 
-    def __str__(self):
-        return self.title
-
-'''
-class ElectionResults(models.Model):
-    election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='results')
-    ballot = models.ForeignKey('voting.Ballot', on_delete=models.CASCADE, related_name='results')
-    results_data = models.JSONField()
-
-    def __str__(self):
-        return f"Results for {self.election.title}"
-'''

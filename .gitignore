@@ -22,3 +22,8 @@ celerybeat-schedule
 .DS_Store
 
 *.rdb
+
+
+# Coverage
+
+*.coverage
