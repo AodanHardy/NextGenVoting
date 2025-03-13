@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from elections.models import Election
-
+from django.core.exceptions import ValidationError
 
 class ElectionModelTest(TestCase):
 
@@ -22,6 +22,12 @@ class ElectionModelTest(TestCase):
         self.assertEqual(self.election.use_blockchain, False)  # Default value
         self.assertEqual(self.election.votes_cast, 0)  # Default value
 
+    def test_election_defaults(self):
+        """Ensure optional fields default correctly."""
+        self.assertIsNone(self.election.start_time)
+        self.assertIsNone(self.election.end_time)
+        self.assertFalse(self.election.results_published)  # Default should be False
+
     def test_election_status_choices(self):
         """Test that status choices are valid."""
         self.election.status = "active"
@@ -40,3 +46,15 @@ class ElectionModelTest(TestCase):
         """Ensure auto_now_add and auto_now work correctly."""
         self.assertIsNotNone(self.election.created_at)
         self.assertIsNotNone(self.election.updated_at)
+
+    def test_use_blockchain_enabled(self):
+        """Ensure election can use blockchain."""
+        self.election.use_blockchain = True
+        self.election.save()
+        self.assertTrue(self.election.use_blockchain)
+
+    def test_publish_results(self):
+        """Ensure results_published can be set to True."""
+        self.election.results_published = True
+        self.election.save()
+        self.assertTrue(self.election.results_published)
