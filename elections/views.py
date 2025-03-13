@@ -259,7 +259,7 @@ def manage_election(request, election_id):
                                                     'ballot_results': ballot_results})
 
 @login_required
-def view_fpp_results(request, ballot_id):  # view results function
+def view_results(request, ballot_id):  # view results function
     ballot = get_object_or_404(Ballot, id=ballot_id, election__user=request.user)
     results_data = ballot.results_data
     candidates = {str(c.id): c.title for c in ballot.candidates.all()}
