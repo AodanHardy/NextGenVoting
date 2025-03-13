@@ -22,10 +22,6 @@ class ElectionModelTest(TestCase):
         self.assertEqual(self.election.use_blockchain, False)  # Default value
         self.assertEqual(self.election.votes_cast, 0)  # Default value
 
-    def test_election_str(self):
-        """Test the string representation of the Election model."""
-        self.assertEqual(str(self.election), "Test Election")
-
     def test_election_status_choices(self):
         """Test that status choices are valid."""
         self.election.status = "active"

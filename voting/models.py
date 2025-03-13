@@ -59,7 +59,7 @@ class Blockchain_Vote(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name='blockchain_vote')
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(choices=STATUS_CHOICES, default=IN_PROGRESS)
+    status = models.CharField(choices=STATUS_CHOICES, default=IN_PROGRESS, max_length=20)
 
     # if vote fails to be uploaded to blockchain, save it here
-    vote_data = models.JSONField(default=dict)
+    vote_data = models.JSONField(default=dict, blank=True, null=True)
