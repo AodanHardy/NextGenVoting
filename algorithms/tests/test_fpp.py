@@ -3,8 +3,6 @@ from django.test import TestCase
 from algorithms.firstPastThePost import FPTPVoteProcessor
 
 
-# update this import path
-
 class FPTPAlgorithmTest(TestCase):
 
     def setUp(self):

@@ -50,7 +50,7 @@ class RankedChoiceAlgorithmTest(TestCase):
         result = processor.finalize_results()
 
         self.assertEqual(len(result["winners"]), 1)
-        self.assertIn(result["winners"][0], self.candidates.values())  # Valid candidate
+        self.assertIn(result["winners"][0], self.candidates.values())
 
     def test_quota_calculation(self):
         votes = [{"rankings": [1]} for _ in range(10)]
@@ -67,4 +67,4 @@ class RankedChoiceAlgorithmTest(TestCase):
         processor = RankedChoiceVoteProcessor(votes, self.candidates, num_winners=1)
         result = processor.finalize_results()
         self.assertEqual(len(result["ties"]), 4)
-        self.assertEqual(result["winners"], [])  # No winner due to tie
+        self.assertEqual(result["winners"], [])

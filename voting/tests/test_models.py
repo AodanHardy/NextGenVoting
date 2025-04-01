@@ -37,7 +37,7 @@ class VotingModelsTest(TestCase):
             vote_data={"tx_hash": "123abc"}
         )
 
-    # BALLOT MODEL TESTS
+    # BALLOT MODEL
     def test_ballot_creation(self):
         self.assertEqual(self.ballot.title, "Test Ballot")
         self.assertEqual(self.ballot.voting_type, "FPP")
@@ -51,25 +51,25 @@ class VotingModelsTest(TestCase):
             self.ballot.save()
             self.assertEqual(self.ballot.voting_type, v_type)
 
-    # CANDIDATE MODEL TESTS
+    # CANDIDATE MODEL
     def test_candidate_creation(self):
         self.assertEqual(self.candidate.title, "Test Candidate")
         self.assertEqual(self.candidate.ballot, self.ballot)
 
-    # VOTER MODEL TESTS
+    # VOTER MODEL
     def test_voter_creation(self):
         self.assertEqual(self.voter.name, "Test Voter")
         self.assertEqual(self.voter.email, "voter@example.com")
         self.assertEqual(self.voter.election, self.election)
         self.assertFalse(self.voter.voted)  # Default should be False
 
-    # VOTE MODEL TESTS ###
+    # VOTE MODEL
     def test_vote_creation(self):
         self.assertEqual(self.vote.ballot, self.ballot)
         self.assertEqual(self.vote.vote_data, {"candidate_id": str(self.candidate.id)})
         self.assertIsNotNone(self.vote.created_at)  # Ensure timestamp is set
 
-    # BLOCKCHAIN VOTE MODEL TESTS ###
+    # BLOCKCHAIN VOTE MODEL
     def test_blockchain_vote_creation(self):
         self.assertEqual(self.blockchain_vote.election, self.election)
         self.assertEqual(self.blockchain_vote.status, "in_progress")

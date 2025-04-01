@@ -14,16 +14,16 @@ class ElectionModelTest(TestCase):
         )
 
     def test_election_creation(self):
-        self.assertEqual(self.election.title, "Test Election")
-        self.assertEqual(self.election.description, "This is a test election.")
-        self.assertEqual(self.election.status, "pending")  # Default status
-        self.assertEqual(self.election.use_blockchain, False)  # Default value
-        self.assertEqual(self.election.votes_cast, 0)  # Default value
+        self.assertEqual(self.election.title, "test election")
+        self.assertEqual(self.election.description, "test election.")
+        self.assertEqual(self.election.status, "pending")
+        self.assertEqual(self.election.use_blockchain, False)
+        self.assertEqual(self.election.votes_cast, 0)
 
     def test_election_defaults(self):
         self.assertIsNone(self.election.start_time)
         self.assertIsNone(self.election.end_time)
-        self.assertFalse(self.election.results_published)  # Default should be False
+        self.assertFalse(self.election.results_published)
 
     def test_election_status_choices(self):
         self.election.status = "active"
