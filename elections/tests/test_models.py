@@ -9,8 +9,8 @@ class ElectionModelTest(TestCase):
         self.user = User.objects.create_user(username="testuser", password="testpass")
         self.election = Election.objects.create(
             user=self.user,
-            title="Test Election",
-            description="This is a test election.",
+            title="test election",
+            description="test election.",
         )
 
     def test_election_creation(self):
