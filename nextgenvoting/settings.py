@@ -165,6 +165,7 @@ CELERY_TIMEZONE = 'UTC'
 # blockchain
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 CONTRACT_ADDRESS = os.getenv("CONTRACT_ADDRESS")
+RPC_URL = "https://polygon-rpc.com"
 
 # Email
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')

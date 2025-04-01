@@ -2,17 +2,12 @@ import json
 from web3 import Web3
 from eth_account import Account
 
-from elections.models import Election
 from nextgenvoting import settings
 from celery import shared_task
-
+from nextgenvoting.settings import RPC_URL
 from voting.models import Blockchain_Vote
 
-# need to send this to constant somewhere
-rpc_url = "https://polygon-rpc.com"
 
-
-#@shared_task(bind=True, max_retries=3, default_retry_delay=30)
 @shared_task
 def cast_vote_async(bc_voteId, vote_data):
 
@@ -40,14 +35,10 @@ def cast_vote_async(bc_voteId, vote_data):
         print(f"An error occurred while processing vote_id {bc_vote.id}: {e}")
 
 
-
-
-
-
 class BlockchainManager:
     def __init__(self):
 
-        self.web3 = Web3(Web3.HTTPProvider(rpc_url))
+        self.web3 = Web3(Web3.HTTPProvider(RPC_URL))
 
         # get abi from json file
         with open('algorithms/abi.json') as f:
