@@ -143,9 +143,6 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = 'elections:dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
-
-
-
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / "core/static"]
 
@@ -173,3 +170,7 @@ EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+
+# encryption
+ENCRYPTED_MODEL_FIELDS_KEY = os.environ["ENCRYPTED_MODEL_FIELDS_KEY"]

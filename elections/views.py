@@ -1,3 +1,6 @@
+import json
+import os
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -15,6 +18,9 @@ import csv
 from .forms import VoterUploadForm
 from .utils import VoterData, getWinningVote, organise_votes_by_ballot, validate_candidates
 from .utils import ElectionData, BallotData
+from cryptography.fernet import Fernet
+
+fernet = Fernet(os.environ["ENCRYPTED_MODEL_FIELDS_KEY"])
 
 # Create your views here.
 
@@ -183,12 +189,15 @@ def manage_election(request, election_id):
                     # call FPP algorithm for FPP or YN votes
                     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                         processor = FPTPVoteProcessor(candidates_dict, vote_list)
-                        ballot.results_data = processor.result
+                        ballot.results_data = ballot.results_data = \
+                            fernet.encrypt(json.dumps(processor.result).encode()).decode()
 
                     # ranked choice
                     elif ballot.voting_type == "RCV":
                         processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
-                        ballot.results_data = processor.finalize_results()
+
+                        # encrypt here
+                        ballot.results_data = fernet.encrypt(json.dumps(processor.finalize_results()).encode()).decode()
 
                     # save results
                     ballot.save()
@@ -226,13 +235,15 @@ def manage_election(request, election_id):
         ballot_ties = []
         # check if results dict is not empty
         if ballot.results_data:
-            results = ballot.results_data
+
+            # decode reselts
+            results = json.loads(fernet.decrypt(ballot.results_data.encode()).decode())
 
             winners = results.get('winners', [])
             ties = results.get('ties', [])
 
             if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
-                winnersIds = getWinningVote(ballot.results_data)
+                winnersIds = getWinningVote(results)
                 winners = []
                 for id in winnersIds:
                     winners.append(Candidate.objects.get(id=id))
@@ -261,7 +272,7 @@ def manage_election(request, election_id):
 @login_required
 def view_results(request, ballot_id):  # view results function
     ballot = get_object_or_404(Ballot, id=ballot_id, election__user=request.user)
-    results_data = ballot.results_data
+    results_data = json.loads(fernet.decrypt(ballot.results_data.encode()).decode())
     candidates = {str(c.id): c.title for c in ballot.candidates.all()}
 
     # if its FPP, send to FPP html template
