@@ -163,12 +163,16 @@ def manage_election(request, election_id):
                 for ballot in ballots:
 
                     # fetch votes
+
                     votes = Vote.objects.filter(ballot=ballot)
+
+                    #decrypted_data = json.loads(fernet.decrypt(ballot.results_data.encode()).decode())
 
                     # prep data
                     vote_list = []
                     for vote in votes:
-                        vote_list.append(vote.vote_data)
+                        # decrypt vote
+                        vote_list.append(json.loads(fernet.decrypt(vote.vote_data)))
 
                     candidates_list = Candidate.objects.filter(ballot=ballot)
                     candidates_dict = {}

@@ -1,3 +1,6 @@
+import json
+import os
+
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -7,6 +10,9 @@ from elections.models import Election
 from voting.blockchain import BlockchainManager, cast_vote_async
 from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
 from voting.utils import get_ranked_order, rcv_validator
+from cryptography.fernet import Fernet
+
+fernet = Fernet(os.environ["ENCRYPTED_MODEL_FIELDS_KEY"])
 
 
 # Create your views here.
@@ -266,6 +272,9 @@ def vote_summary(request, vote_id):
                 ballotId = ballot.get('id')
                 ballotobj = Ballot.objects.get(id=ballotId)
 
+                # encrypt the vote
+                encryptedVote = fernet.encrypt(json.dumps(ballotVoteDict).encode()).decode()
+
                 '''
                  At this point, the the ballot data is set and we need to save the vote data to the database
                  
@@ -274,7 +283,7 @@ def vote_summary(request, vote_id):
                 # creating votes
                 Vote.objects.create(
                     ballot=ballotobj,
-                    vote_data=ballotVoteDict
+                        vote_data=encryptedVote
                 )
 
 
