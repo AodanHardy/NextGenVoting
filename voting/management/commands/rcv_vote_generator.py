@@ -13,7 +13,7 @@ egCandidates = {719: 'Pete', 720: 'Mick', 721: 'Walter', 722: 'Jessie'}
 def generateRcvVotes(candidates, numVotes):
     votes = []
 
-    # Assign a random weight (likelihood) to each candidate
+    # Assign a random weight to each candidate
     candidate_weights = {cid: random.uniform(0.6, 1.0) for cid in candidates}
 
     for _ in range(numVotes):
