@@ -7,12 +7,13 @@ from django.urls import reverse
 
 
 from elections.models import Election
-from voting.blockchain import BlockchainManager, cast_vote_async
+from nextgenvoting.settings import ENCRYPTED_MODEL_FIELDS_KEY
+from voting.blockchain import cast_vote_async
 from voting.models import Ballot, Voter, Candidate, Vote, Blockchain_Vote
 from voting.utils import get_ranked_order, rcv_validator
 from cryptography.fernet import Fernet
 
-fernet = Fernet(os.environ["ENCRYPTED_MODEL_FIELDS_KEY"])
+fernet = Fernet(ENCRYPTED_MODEL_FIELDS_KEY)
 
 
 # Create your views here.
@@ -40,7 +41,7 @@ def voting_intro(request, voter_id):
                           {'message': message})
 
     if voter.voted:
-        message = "This Voter has already voted"
+        message = "You have already voted"
         return render(request, "vote_error.html",
                       {'message': message})
 

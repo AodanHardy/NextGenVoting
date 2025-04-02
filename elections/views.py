@@ -1,12 +1,11 @@
 import json
-import os
 
-from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from algorithms.firstPastThePost import FPTPVoteProcessor
 from algorithms.rankedChoiceVote import RankedChoiceVoteProcessor
+from nextgenvoting.settings import ENCRYPTED_MODEL_FIELDS_KEY
 from voting.blockchain import BlockchainManager
 from .emailManager import sendAllEmails_async
 from .forms import ElectionDetailsForm, BallotForm, CandidatesForm, EditElectionForm
@@ -20,7 +19,7 @@ from .utils import VoterData, getWinningVote, organise_votes_by_ballot, validate
 from .utils import ElectionData, BallotData
 from cryptography.fernet import Fernet
 
-fernet = Fernet(os.environ["ENCRYPTED_MODEL_FIELDS_KEY"])
+fernet = Fernet(ENCRYPTED_MODEL_FIELDS_KEY)
 
 # Create your views here.
 

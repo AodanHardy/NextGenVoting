@@ -1,10 +1,12 @@
 import json
-import os
+
 import random
 
 from cryptography.fernet import Fernet
 
-fernet = Fernet(os.environ["ENCRYPTED_MODEL_FIELDS_KEY"])
+from nextgenvoting.settings import ENCRYPTED_MODEL_FIELDS_KEY
+
+fernet = Fernet(ENCRYPTED_MODEL_FIELDS_KEY)
 
 egOutputVote = {'rankings': [721, 720, 722]}
 egCandidates = {719: 'Pete', 720: 'Mick', 721: 'Walter', 722: 'Jessie'}
