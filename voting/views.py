@@ -226,11 +226,15 @@ def vote_summary(request, vote_id):
             # then send the id to cast vote to async send the vote to blockchain
             #
 
+            # encrypt vote
+            encrypted_vote = fernet.encrypt(json.dumps(blockchainArray).encode()).decode()
+
+
             bc_vote = Blockchain_Vote(election=electionObj)
             bc_vote.save()
 
 
-            cast_vote_async.delay(bc_vote.id, str(blockchainArray))
+            cast_vote_async.delay(bc_vote.id, encrypted_vote)
 
 
             '''

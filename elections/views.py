@@ -116,8 +116,10 @@ def manage_election(request, election_id):
 
                 # get each vote from blockchain and add to votes
                 for vote in blockchainVotes:
+                    # decrypt the vote
+                    decrypted_vote = str(json.loads(fernet.decrypt(bm.getVote(vote.id))))
 
-                    votes.append(bm.getVote(vote.id))
+                    votes.append(decrypted_vote)
 
                 # if there's any failed votes, they will be saved in vote data
                 failed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.FAILED)
@@ -142,12 +144,13 @@ def manage_election(request, election_id):
                     # call FPP algorithm for FPP or YN votes
                     if ballot.voting_type == "FPP" or ballot.voting_type == "YN":
                         processor = FPTPVoteProcessor(candidates_dict, vote_list)
-                        ballot.results_data = processor.result
+                        ballot.results_data = fernet.encrypt(json.dumps(processor.result).encode()).decode()
+
 
                     # ranked choice
                     elif ballot.voting_type == "RCV":
                         processor = RankedChoiceVoteProcessor(vote_list, candidates_dict, ballot.number_of_winners)
-                        ballot.results_data = processor.finalize_results()
+                        ballot.results_data = fernet.encrypt(json.dumps(processor.finalize_results()).encode()).decode()
 
                     # save results
                     ballot.save()
@@ -622,10 +625,9 @@ def edit_ballot(request, ballot_id):
 
                 ballot.save()
 
-                messages.success(request, "Ballot updated successfully!")
                 return redirect('manage_election', ballot.election.id)
-            else:
-                messages.error(request, "Please correct the errors below.")
+
+
     else:
         # pre-populate the forms with existing data
         ballot_form = BallotForm(initial={
@@ -691,7 +693,6 @@ def edit_election(request, election_id):
         form = EditElectionForm(request.POST, instance=election)
         if form.is_valid():
             form.save()
-            messages.success(request, "Election updated successfully.")
             return redirect("manage_election", election_id=election.id)
     else:
         form = EditElectionForm(instance=election)
