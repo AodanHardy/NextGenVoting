@@ -124,7 +124,11 @@ def manage_election(request, election_id):
                 # if there's any failed votes, they will be saved in vote data
                 failed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.FAILED)
                 for vote in failed_votes:
-                    votes.append(vote.vote_data)
+                    # vote data should be encrypted
+                    decrypted_vote = str(fernet.encrypt(vote.vote_data))
+                    votes.append(decrypted_vote)
+
+
                     # empty vote data after for security
                     vote.vote_data = dict({})
                     vote.save()
