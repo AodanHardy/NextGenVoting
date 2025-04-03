@@ -164,7 +164,6 @@ class RankedChoiceVoteProcessor:
             else:
 
                 # Need to implement logic for tiebreaker if not safe to delete tied candidates
-                print("not safe to eliminate")
                 tiedNames = []
                 for candidate_id, candidate_info in lowestCandidates.items():
                     tiedNames.append(candidate_info.get('name'))
@@ -183,9 +182,6 @@ class RankedChoiceVoteProcessor:
         # If there are as many remaining candidates as winners needed then
         # there's no point continuing to next round
         if len(remaining_valid_candidates) <= remaining_winners_needed:
-
-            print()
-
             for candidate_id in remaining_valid_candidates:
                 if not self.candidates[candidate_id]["elected"]:
                     self.winners.append(self.candidates[candidate_id]["name"])
