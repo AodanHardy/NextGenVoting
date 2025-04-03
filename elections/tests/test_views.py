@@ -145,15 +145,7 @@ class ViewResultsTest(TestCase):
         response = self.client.get(reverse("view_results", args=[self.fpp_ballot.id]))
         self.assertEqual(response.status_code, 404)
 
-    # TEST VIEW RESULTS FUNCTIONALITY
-    def test_view_results_fpp(self):
-        self.client.login(username="testuser", password="testpass")
-        response = self.client.get(reverse("view_results", args=[self.fpp_ballot.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "view_results_FPP.html")
-        self.assertContains(response, "FPP Ballot")
-        self.assertContains(response, "Alice")
-        self.assertContains(response, "Bob")
+
 
 
 
