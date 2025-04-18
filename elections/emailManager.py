@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from celery import shared_task
 
 from elections.models import Election
-from nextgenvoting.settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_HOST, EMAIL_PORT
+from nextgenvoting.settings import HOST_URL, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_HOST, EMAIL_PORT
 from voting.models import Voter
 
 
@@ -40,7 +40,7 @@ class EmailManager:
     def send_email(self, voter):
 
         # make the link here
-        unique_link = f"http://localhost:8000/vote/{voter.id}/"
+        unique_link = f"{HOST_URL}{voter.id}/"
 
         subject = f"Vote now in {self.election.title}"
 

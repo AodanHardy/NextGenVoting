@@ -28,6 +28,12 @@ SECRET_KEY = 'django-insecure-siub-se@76_ei@t@*add4)d$1!(1^==p_45%xu$5#j@getr6e$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+if DEBUG:
+    HOST_URL = "http://localhost:8000/vote/"
+else:
+    # Use deployed url
+    HOST_URL = "http://localhost:8000/vote/"
+
 ALLOWED_HOSTS = []
 
 
