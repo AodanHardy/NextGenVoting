@@ -32,7 +32,7 @@ if DEBUG:
     HOST_URL = "http://localhost:8000/vote/"
 else:
     # Use deployed url
-    HOST_URL = "http://localhost:8000/vote/"
+    HOST_URL = os.getenv("HOST_URL")
 
 ALLOWED_HOSTS = []
 
