@@ -72,7 +72,10 @@ Install all required Python packages from `requirements.txt`:
 pip install -r requirements.txt
 ```
 
-### run migrations
+### make and run migrations (sets up tabes in database)
+```bash
+python manage.py makemigrations
+```
 ```bash
 python manage.py migrate
 ```
@@ -105,7 +108,10 @@ celery -A nextgenvoting worker
 
 
 # 7. Usage
-sign in/ register
+Once the server is started, you can goto the following link on your browser to view the website:
+
+## Sign in / Register
+
 
 create election
 
