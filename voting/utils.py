@@ -13,7 +13,7 @@ def get_ranked_order(ranked_dict):
 
 def rcv_validator(postData, candidateIds):
     """
-    function is called to check if users input for rcv ballot is valid
+    function is called to check if users input for rcv ballot is valid, if not return message why
     """
     votes = {}
     rankings = []
@@ -26,8 +26,6 @@ def rcv_validator(postData, candidateIds):
         return False, "YOU MUST MAKE A SELECTION"
 
     rankings.sort()
-    print()
-
     # check dupes
 
     # check no missing numbers

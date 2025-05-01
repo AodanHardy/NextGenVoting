@@ -10,7 +10,9 @@ from voting.models import Blockchain_Vote
 
 @shared_task
 def cast_vote_async(bc_voteId, vote_data):
-
+    """
+    this function puts the process of casting a vote into an async task
+    """
     bc_vote = Blockchain_Vote.objects.get(id=bc_voteId)
 
     try:
@@ -48,7 +50,6 @@ class BlockchainManager:
         self.private_key = settings.PRIVATE_KEY
         self.account = Account.from_key(self.private_key)
         self.contract = self.web3.eth.contract(address=self.contract_address, abi=self.contract_abi)
-
 
     def getVote(self, voterId):
         try:

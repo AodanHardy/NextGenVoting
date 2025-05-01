@@ -291,9 +291,6 @@ def vote_summary(request, vote_id):
                         vote_data=encryptedVote
                 )
 
-
-
-
         '''
         after all ballots have been uploaded, i need to update the voted column of the voter table
         '''
