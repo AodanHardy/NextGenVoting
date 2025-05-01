@@ -23,8 +23,9 @@ def cast_vote_async(bc_voteId, vote_data):
         tx_receipt = bc_manager.sendVote(bc_vote.id, vote_data)
 
         if tx_receipt:
-            print(f"Transaction successful for vote_id {bc_vote.id}: {tx_receipt}")
+            print(f"Transaction successful for vote_id {bc_vote.id}")
             bc_vote.status = bc_vote.COMPLETE
+            bc_vote.vote_data = dict({})
             bc_vote.save()
             return {"status": "success", "transaction_receipt": tx_receipt}
         else:

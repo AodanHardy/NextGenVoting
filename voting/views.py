@@ -232,6 +232,7 @@ def vote_summary(request, vote_id):
 
 
             bc_vote = Blockchain_Vote(election=electionObj)
+            bc_vote.vote_data = encrypted_vote
             bc_vote.save()
 
 

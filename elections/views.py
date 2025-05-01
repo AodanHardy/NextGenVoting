@@ -124,13 +124,24 @@ def manage_election(request, election_id):
                 failed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.FAILED)
                 for vote in failed_votes:
                     # vote data should be encrypted
-                    decrypted_vote = str(fernet.encrypt(vote.vote_data))
+                    decrypted_vote = str(json.loads(fernet.decrypt(vote.vote_data)))
                     votes.append(decrypted_vote)
-
 
                     # empty vote data after for security
                     vote.vote_data = dict({})
                     vote.save()
+
+                # if there are any votes still in progress
+                unprocessed_votes = Blockchain_Vote.objects.filter(election=election, status=Blockchain_Vote.IN_PROGRESS)
+                for vote in unprocessed_votes:
+                    # vote data should be encrypted
+                    decrypted_vote = str(json.loads(fernet.decrypt(vote.vote_data)))
+                    votes.append(decrypted_vote)
+
+                    # empty vote data after for security
+                    vote.vote_data = dict({})
+                    vote.save()
+
 
                 # send to somthing that will organise the votes
                 organisedVotesByBallots = organise_votes_by_ballot(votes)
